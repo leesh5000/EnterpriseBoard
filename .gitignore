@@ -39,3 +39,7 @@ out/
 ### Kotlin ###
 .kotlin
 .junie
+
+### Jdk ###
+jdk-21.0.7
+.claude

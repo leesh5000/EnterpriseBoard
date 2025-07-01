@@ -9,13 +9,26 @@ import java.time.LocalDateTime
 @Entity
 class Article {
     @Id
-    private var articleId: Long? = null
-    private var title: String? = null
-    private var content: String? = null
-    private var boardId: Long? = null // shard key
-    private var writerId: Long? = null
-    private var createdAt: LocalDateTime? = null
-    private var modifiedAt: LocalDateTime? = null
+    var articleId: Long? = null
+        private set
+    
+    var title: String? = null
+        private set
+    
+    var content: String? = null
+        private set
+    
+    var boardId: Long? = null // shard key
+        private set
+    
+    var writerId: Long? = null
+        private set
+    
+    var createdAt: LocalDateTime? = null
+        private set
+    
+    var modifiedAt: LocalDateTime? = null
+        private set
 
     fun update(title: String?, content: String?) {
         this.title = title
