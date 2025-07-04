@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.article
+package me.helloc.enterpriseboard
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
