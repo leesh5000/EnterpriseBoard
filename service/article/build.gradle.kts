@@ -10,3 +10,7 @@ dependencies {
     testImplementation("org.testcontainers:mysql")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
+
+springBoot {
+    mainClass.set("me.helloc.enterpriseboard.ArticleApplicationKt")
+}

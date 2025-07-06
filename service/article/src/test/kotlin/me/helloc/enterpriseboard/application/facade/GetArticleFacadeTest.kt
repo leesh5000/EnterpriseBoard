@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -8,15 +8,16 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.application.facade.GetArticleFacade
 
-class GetArticleServiceTest : StringSpec({
+class GetArticleFacadeTest : StringSpec({
 
     lateinit var fakeRepository: FakeArticleRepository
-    lateinit var getArticleService: GetArticleService
+    lateinit var getArticleFacade: GetArticleFacade
 
     beforeEach {
         fakeRepository = FakeArticleRepository()
-        getArticleService = GetArticleService(fakeRepository)
+        getArticleFacade = GetArticleFacade(fakeRepository)
     }
 
     "ID로 Article을 조회할 수 있어야 한다" {
@@ -31,7 +32,7 @@ class GetArticleServiceTest : StringSpec({
         fakeRepository.save(article)
 
         // When
-        val foundArticle = getArticleService.getById(1L)
+        val foundArticle = getArticleFacade.getById(1L)
 
         // Then
         foundArticle shouldNotBe null
@@ -43,7 +44,7 @@ class GetArticleServiceTest : StringSpec({
         // Repository가 비어있음
 
         // When
-        val foundArticle = getArticleService.getById(999L)
+        val foundArticle = getArticleFacade.getById(999L)
 
         // Then
         foundArticle shouldBe null
@@ -77,7 +78,7 @@ class GetArticleServiceTest : StringSpec({
         fakeRepository.save(article3)
 
         // When
-        val articles = getArticleService.getByBoardId(100L)
+        val articles = getArticleFacade.getByBoardId(100L)
 
         // Then
         articles shouldHaveSize 2
@@ -96,7 +97,7 @@ class GetArticleServiceTest : StringSpec({
         fakeRepository.save(article)
 
         // When
-        val articles = getArticleService.getByBoardId(999L)
+        val articles = getArticleFacade.getByBoardId(999L)
 
         // Then
         articles.shouldBeEmpty()
@@ -130,7 +131,7 @@ class GetArticleServiceTest : StringSpec({
         fakeRepository.save(article3)
 
         // When
-        val articles = getArticleService.getByWriterId(200L)
+        val articles = getArticleFacade.getByWriterId(200L)
 
         // Then
         articles shouldHaveSize 2
@@ -149,7 +150,7 @@ class GetArticleServiceTest : StringSpec({
         fakeRepository.save(article)
 
         // When
-        val articles = getArticleService.getByWriterId(999L)
+        val articles = getArticleFacade.getByWriterId(999L)
 
         // Then
         articles.shouldBeEmpty()
@@ -160,9 +161,9 @@ class GetArticleServiceTest : StringSpec({
         // Repository가 비어있음
 
         // When & Then
-        getArticleService.getById(1L) shouldBe null
-        getArticleService.getByBoardId(100L).shouldBeEmpty()
-        getArticleService.getByWriterId(200L).shouldBeEmpty()
+        getArticleFacade.getById(1L) shouldBe null
+        getArticleFacade.getByBoardId(100L).shouldBeEmpty()
+        getArticleFacade.getByWriterId(200L).shouldBeEmpty()
     }
 
     "페이지 조회 시 올바른 Article 목록과 totalCount를 반환해야 한다" {
@@ -200,7 +201,7 @@ class GetArticleServiceTest : StringSpec({
         )
 
         // When
-        val result = getArticleService.getPage(query)
+        val result = getArticleFacade.getPage(query)
 
         // Then
         result.articles shouldHaveSize 2
@@ -227,7 +228,7 @@ class GetArticleServiceTest : StringSpec({
         )
 
         // When
-        val result = getArticleService.getPage(query)
+        val result = getArticleFacade.getPage(query)
 
         // Then
         result.articles shouldHaveSize 1
@@ -255,7 +256,7 @@ class GetArticleServiceTest : StringSpec({
         )
 
         // When
-        val result = getArticleService.getPage(query)
+        val result = getArticleFacade.getPage(query)
 
         // Then
         result.articles shouldHaveSize 2
@@ -284,7 +285,7 @@ class GetArticleServiceTest : StringSpec({
         )
 
         // When
-        val result = getArticleService.getPage(query)
+        val result = getArticleFacade.getPage(query)
 
         // Then
         result.articles.shouldBeEmpty()
@@ -318,7 +319,7 @@ class GetArticleServiceTest : StringSpec({
         )
 
         // When
-        val result = getArticleService.getPage(query)
+        val result = getArticleFacade.getPage(query)
 
         // Then
         result.articles shouldHaveSize 2

@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.adapter.`in`.loader
+package me.helloc.enterpriseboard.data
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext

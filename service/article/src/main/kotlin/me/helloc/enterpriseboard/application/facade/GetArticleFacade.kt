@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageResult
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-class GetArticleService(
+class GetArticleFacade(
     private val articleRepository: ArticleRepository
 ) : GetArticleUseCase {
 

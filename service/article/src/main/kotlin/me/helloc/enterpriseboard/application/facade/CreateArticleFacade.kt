@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.common.snowflake.Snowflake
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class CreateArticleService(
+class CreateArticleFacade(
     private val articleRepository: ArticleRepository
 ) : CreateArticleUseCase {
 

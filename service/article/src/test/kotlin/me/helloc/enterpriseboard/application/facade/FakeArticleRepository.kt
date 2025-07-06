@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article

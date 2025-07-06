@@ -1,18 +1,19 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.application.facade.DeleteArticleFacade
 
-class DeleteArticleServiceTest : StringSpec({
+class DeleteArticleFacadeTest : StringSpec({
 
     lateinit var fakeRepository: FakeArticleRepository
-    lateinit var deleteArticleService: DeleteArticleService
+    lateinit var deleteArticleFacade: DeleteArticleFacade
 
     beforeEach {
         fakeRepository = FakeArticleRepository()
-        deleteArticleService = DeleteArticleService(fakeRepository)
+        deleteArticleFacade = DeleteArticleFacade(fakeRepository)
     }
 
     "존재하는 Article을 삭제할 수 있어야 한다" {
@@ -27,7 +28,7 @@ class DeleteArticleServiceTest : StringSpec({
         fakeRepository.save(article)
 
         // When
-        deleteArticleService.delete(1L)
+        deleteArticleFacade.delete(1L)
 
         // Then
         fakeRepository.existsById(1L) shouldBe false
@@ -40,7 +41,7 @@ class DeleteArticleServiceTest : StringSpec({
 
         // When & Then
         val exception = shouldThrow<NoSuchElementException> {
-            deleteArticleService.delete(999L)
+            deleteArticleFacade.delete(999L)
         }
         exception.message shouldBe "Article not found with id: 999"
     }
@@ -73,7 +74,7 @@ class DeleteArticleServiceTest : StringSpec({
         fakeRepository.save(article3)
 
         // When
-        deleteArticleService.delete(2L)
+        deleteArticleFacade.delete(2L)
 
         // Then
         fakeRepository.existsById(1L) shouldBe true
@@ -92,11 +93,11 @@ class DeleteArticleServiceTest : StringSpec({
             writerId = 200L
         )
         fakeRepository.save(article)
-        deleteArticleService.delete(1L)
+        deleteArticleFacade.delete(1L)
 
         // When & Then
         val exception = shouldThrow<NoSuchElementException> {
-            deleteArticleService.delete(1L)
+            deleteArticleFacade.delete(1L)
         }
         exception.message shouldBe "Article not found with id: 1"
     }
@@ -111,7 +112,7 @@ class DeleteArticleServiceTest : StringSpec({
             writerId = 200L
         )
         fakeRepository.save(originalArticle)
-        deleteArticleService.delete(1L)
+        deleteArticleFacade.delete(1L)
 
         val newArticle = Article.create(
             articleId = 1L,

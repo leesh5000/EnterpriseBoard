@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-이 파일은 이 저장소에서 코드를 작업할 때 Claude Code(clause.ai/code)에게 지침을 제공합니다.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+이 파일은 이 저장소에서 코드를 작업할 때 Claude Code(claude.ai/code)에게 지침을 제공합니다.
 
 ## 기본 지침
 
@@ -77,25 +79,64 @@
 **HEXAGONAL ARCHITECTURE (헥사고날 아키텍처)**
 이 프로젝트는 헥사고날 아키텍처(포트와 어댑터 패턴)를 따릅니다. 새로운 기능을 추가하거나 기존 코드를 수정할 때 반드시 이 구조를 유지해야 합니다.
 
-**프로젝트 구조**
+**프로젝트 구조 (Article 서비스 기준)**
 ```
-service/{service-name}/src/main/kotlin/me/helloc/enterpriseboard/
+service/article/src/main/kotlin/me/helloc/enterpriseboard/
+├── ArticleApplication.kt          # 🚀 Spring Boot 메인 애플리케이션
+│
 ├── domain/                        # 🎯 순수 도메인 레이어
-│   ├── model/                    # 도메인 엔티티 (비즈니스 로직 포함)
-│   └── service/                  # 도메인 서비스 (복잡한 비즈니스 로직)
+│   ├── model/
+│   │   └── Article.kt            # 도메인 엔티티 (비즈니스 로직 포함)
+│   └── service/
+│       └── PageLimitCalculator.kt # 도메인 서비스 (페이지 제한값 계산)
 │
 ├── application/                   # 📋 애플리케이션 레이어
 │   ├── port/
 │   │   ├── in/                   # 인바운드 포트 (유스케이스 인터페이스)
+│   │   │   ├── CreateArticleUseCase.kt + CreateArticleCommand
+│   │   │   ├── DeleteArticleUseCase.kt
+│   │   │   ├── GetArticleUseCase.kt + GetArticlePageQuery/Result
+│   │   │   └── UpdateArticleUseCase.kt + UpdateArticleCommand
 │   │   └── out/                  # 아웃바운드 포트 (외부 시스템 인터페이스)
-│   └── service/                  # 유스케이스 구현
+│   │       └── ArticleRepository.kt # 영속성 포트 정의
+│   └── facade/                  # 유스케이스 구현 (Facade 패턴)
+│       ├── CreateArticleFacade.kt
+│       ├── DeleteArticleFacade.kt
+│       ├── GetArticleFacade.kt  # 페이지네이션 로직 포함
+│       └── UpdateArticleFacade.kt
 │
 └── adapter/                      # 🔌 어댑터 레이어
     ├── in/                       # 인바운드 어댑터
+    │   ├── loader/
+    │   │   └── DataInitializer.kt # 대용량 데이터 초기화 도구
     │   └── web/                  # REST 컨트롤러
+    │       ├── ArticleController.kt # REST API 엔드포인트
+    │       ├── GlobalExceptionHandler.kt # 전역 예외 처리
     │       └── dto/              # Request/Response DTO
+    │           ├── ArticlePageResponse.kt # 페이지 조회 응답
+    │           ├── ArticleResponse.kt     # 개별 조회 응답
+    │           ├── CreateArticleRequest.kt
+    │           └── UpdateArticleRequest.kt
     └── out/                      # 아웃바운드 어댑터
-        └── persistence/          # JPA, Redis 등 영속성 어댑터
+        └── persistence/          # JPA 영속성 어댑터
+            ├── ArticleJpaAdapter.kt   # Repository 구현체
+            ├── ArticleJpaEntity.kt    # JPA 엔티티
+            └── ArticleJpaRepository.kt # Spring Data JPA 인터페이스
+
+# 테스트 구조 (src/test/)
+test/kotlin/me/helloc/enterpriseboard/
+├── ArticleRepositoryTest.kt      # 영속성 계층 테스트
+├── adapter/in/web/
+│   ├── ArticleControllerTest.kt  # 컨트롤러 단위 테스트
+│   └── FakeUseCases.kt          # 테스트 더블 (Fake 구현체)
+├── application/facade/
+│   ├── *ArticleFacadeTest.kt   # Facade 계층 단위 테스트
+│   └── FakeArticleRepository.kt # Repository 테스트 더블
+├── domain/
+│   ├── model/ArticleTest.kt     # 도메인 모델 테스트
+│   └── service/PageLimitCalculatorTest.kt # 도메인 서비스 테스트
+└── integration/
+    └── ArticleIntegrationTest.kt # TestContainers 기반 통합 테스트
 ```
 
 **핵심 원칙**
@@ -104,11 +145,35 @@ service/{service-name}/src/main/kotlin/me/helloc/enterpriseboard/
 3. **포트 정의**: Application 레이어에서 인터페이스로 포트 정의
 4. **어댑터 구현**: Adapter 레이어에서 포트 구현체 제공
 
-**구현 가이드라인**
-- Domain Model: JPA 등 영속성 프레임워크 의존성 없이 순수 Kotlin 클래스로 작성
-- UseCase: 하나의 비즈니스 유스케이스당 하나의 인터페이스 정의
-- Adapter: 도메인 모델과 외부 시스템 간 변환 로직 포함
-- DTO: 각 레이어 간 데이터 전송에 사용, 도메인 모델 노출 방지
+**구현 가이드라인 (실제 Article 서비스 패턴)**
+
+**Domain Layer**
+- **Model**: 순수 Kotlin 클래스, JPA 의존성 없음 (Article.kt)
+- **Service**: 복잡한 비즈니스 계산 로직 (PageLimitCalculator.kt)
+- **원칙**: 프레임워크 독립적, 비즈니스 로직만 포함
+
+**Application Layer**
+- **UseCase Interface**: 단일 책임 원칙, Command/Query 패턴 적용
+  - CreateArticleUseCase + CreateArticleCommand
+  - GetArticleUseCase + GetArticlePageQuery/Result
+- **Facade Implementation**: UseCase 구현체, 도메인 서비스와 포트 조합
+  - Facade 패턴으로 복잡한 비즈니스 로직을 단순한 인터페이스로 제공
+- **포트 정의**: 인터페이스로 외부 의존성 추상화
+
+**Adapter Layer**
+- **Web Layer**: REST 컨트롤러, DTO 변환, 전역 예외 처리
+- **Persistence Layer**: JPA 어댑터, 도메인 모델 ↔ JPA 엔티티 변환
+- **Loader**: 특수 목적 어댑터 (대용량 데이터 초기화)
+
+**DTO 변환 패턴**
+- Request DTO → Command/Query 객체 → Domain Model
+- Domain Model → Result 객체 → Response DTO
+- 각 계층 간 모델 노출 방지
+
+**테스트 패턴**
+- **단위 테스트**: Fake 구현체 활용 (Mock 프레임워크 지양)
+- **통합 테스트**: TestContainers + 실제 DB
+- **테스트 더블**: 각 포트별 Fake 구현체 제공
 
 **아키텍처 다이어그램**
 자세한 아키텍처 다이어그램은 [docs/hexagonal-architecture-diagram.md](docs/hexagonal-architecture-diagram.md)를 참조하세요.
@@ -213,3 +278,94 @@ feat: 상품 리뷰 평점 시스템 도입
 ## 코드 품질 개선 및 리팩토링에 관한 지침
 
 - 해당 링크를 참고하세요. (https://techblog.lycorp.co.jp/ko/techniques-for-improving-code-quality-list)
+
+## 개발 환경 및 빌드 명령어
+
+### 필수 요구사항
+- **Java**: OpenJDK 21 (프로젝트 루트에 jdk-21.0.7/ 디렉토리 포함)
+- **Kotlin**: 1.9.25
+- **Spring Boot**: 3.5.3
+- **테스트 프레임워크**: Kotest 5.7.2
+
+### 빌드 및 테스트 명령어
+```bash
+# 전체 프로젝트 빌드
+./gradlew build
+
+# 특정 서비스 빌드
+./gradlew :service:article:build
+
+# 전체 테스트 실행
+./gradlew test
+
+# 특정 서비스 테스트 실행
+./gradlew :service:article:test
+
+# 특정 테스트 클래스 실행
+./gradlew :service:article:test --tests "ArticleControllerTest"
+./gradlew :service:article:test --tests "GetArticleFacadeTest"
+
+# 특정 테스트 메서드 실행 (Kotest 기반)
+./gradlew :service:article:test --tests "*페이지 조회 테스트*"
+
+# 통합 테스트 실행
+./gradlew :service:article:test --tests "ArticleIntegrationTest"
+
+# 프로젝트 정리
+./gradlew clean
+
+# 대용량 데이터 초기화 실행 (12M 레코드)
+./gradlew :service:article:bootRun --args='--spring.profiles.active=data-init'
+```
+
+### 멀티모듈 프로젝트 구조
+이 프로젝트는 마이크로서비스 아키텍처로 구성된 멀티모듈 Gradle 프로젝트입니다:
+
+**공통 모듈 (common/)**
+- `common:snowflake`: Twitter Snowflake 기반 분산 ID 생성기
+
+**서비스 모듈 (service/)**
+- `service:article`: 게시글 CRUD 및 페이지네이션 (메인 구현체)
+- `service:comment`: 댓글 서비스 (미래 구현 예정)
+- `service:view`: 조회수 서비스 (미래 구현 예정) 
+- `service:like`: 좋아요 서비스 (미래 구현 예정)
+- `service:hot-article`: 인기 게시글 서비스 (미래 구현 예정)
+- `service:article-read`: 게시글 읽기 전용 서비스 (미래 구현 예정)
+
+### 데이터베이스 및 테스트 환경
+- **운영 DB**: MySQL 8.0
+- **테스트 DB**: TestContainers + MySQL 8.0.33 (통합 테스트)
+- **테스트 격리**: @Transactional 및 격리된 데이터 생성
+- **성능 테스트**: 대용량 데이터 초기화 지원 (12M 레코드)
+
+### 주요 구현 기능
+**게시글 서비스 (service:article)**
+- CRUD 연산 (생성, 조회, 수정, 삭제)
+- 페이지네이션 (PageLimitCalculator 기반)
+- REST API 엔드포인트: `/api/v1/articles`
+- 대용량 데이터 처리 (배치 처리, 멀티스레딩)
+
+**테스트 커버리지**
+- **단위 테스트**: 각 계층별 격리된 테스트 (Fake 객체 사용)
+- **통합 테스트**: 실제 DB 환경 TestContainers 기반
+- **성능 테스트**: 12M 레코드 처리 테스트
+
+### 의존성 관리 패턴
+- 모든 하위 모듈은 루트 `build.gradle.kts`에서 공통 의존성 관리
+- 각 서비스는 필요한 의존성만 추가로 선언
+- TestContainers는 통합 테스트가 필요한 모듈에서만 사용
+
+### 개발 팁
+**테스트 작성 시:**
+- 단위 테스트: Kotest StringSpec 스타일 사용
+- 통합 테스트: JUnit 5 + TestContainers 사용  
+- 테스트 더블: Fake 구현체 활용 (Mock 프레임워크 지양)
+- Facade 테스트: UseCase 인터페이스 기반 단위 테스트
+
+**데이터 처리 시:**
+- 대용량 처리: 배치 크기 5000, 스레드 풀 20개 권장
+- JPA 설정: batch_size=5000, HikariCP max-pool-size=30 설정됨
+
+**모듈 간 의존성:**
+- 공통 모듈(snowflake)은 다른 서비스에서 참조 가능
+- 서비스 간 직접 참조 금지 (향후 이벤트 기반 통신 예정)

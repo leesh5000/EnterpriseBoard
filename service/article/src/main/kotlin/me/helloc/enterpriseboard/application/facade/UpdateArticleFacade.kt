@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleUseCase
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class UpdateArticleService(
+class UpdateArticleFacade(
     private val articleRepository: ArticleRepository
 ) : UpdateArticleUseCase {
 
