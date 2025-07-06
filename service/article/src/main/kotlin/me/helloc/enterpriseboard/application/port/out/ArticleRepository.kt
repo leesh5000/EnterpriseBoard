@@ -9,4 +9,6 @@ interface ArticleRepository {
     fun findByWriterId(writerId: Long): List<Article>
     fun deleteById(articleId: Long)
     fun existsById(articleId: Long): Boolean
+    fun findAll(boardId: Long, offset: Long, limit: Long): List<Article>
+    fun countByBoardId(boardId: Long, limit: Long): Long
 }

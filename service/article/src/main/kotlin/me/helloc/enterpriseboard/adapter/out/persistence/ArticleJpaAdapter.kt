@@ -20,7 +20,7 @@ class ArticleJpaAdapter(
         } else {
             ArticleJpaEntity.from(article)
         }
-        
+
         return articleJpaRepository.save(entity).toDomain()
     }
 
@@ -47,5 +47,18 @@ class ArticleJpaAdapter(
 
     override fun existsById(articleId: Long): Boolean {
         return articleJpaRepository.existsById(articleId)
+    }
+
+    override fun findAll(
+        boardId: Long,
+        offset: Long,
+        limit: Long,
+    ): List<Article> {
+        return articleJpaRepository.findAllByBoardId(boardId, offset, limit)
+            .map { it.toDomain() }
+    }
+
+    override fun countByBoardId(boardId: Long, limit: Long): Long {
+        return articleJpaRepository.countByBoardId(boardId, limit)
     }
 }
