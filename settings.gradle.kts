@@ -3,7 +3,7 @@ rootProject.name = "enterprise-board"
 include(
     "common",
     "common:snowflake",
-    "service:common",
+    "service",
     "service:article",
     "service:comment",
     "service:view",
