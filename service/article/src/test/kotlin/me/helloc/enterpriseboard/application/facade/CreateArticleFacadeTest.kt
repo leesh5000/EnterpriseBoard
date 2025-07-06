@@ -1,18 +1,19 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
+import me.helloc.enterpriseboard.application.facade.CreateArticleFacade
 
-class CreateArticleServiceTest : StringSpec({
+class CreateArticleFacadeTest : StringSpec({
 
     lateinit var fakeRepository: FakeArticleRepository
-    lateinit var createArticleService: CreateArticleService
+    lateinit var createArticleFacade: CreateArticleFacade
 
     beforeEach {
         fakeRepository = FakeArticleRepository()
-        createArticleService = CreateArticleService(fakeRepository)
+        createArticleFacade = CreateArticleFacade(fakeRepository)
     }
 
     "Article 생성 시 정상적으로 저장되어야 한다" {
@@ -25,7 +26,7 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val createdArticle = createArticleService.create(command)
+        val createdArticle = createArticleFacade.create(command)
 
         // Then
         createdArticle.title shouldBe command.title
@@ -44,7 +45,7 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val createdArticle = createArticleService.create(command)
+        val createdArticle = createArticleFacade.create(command)
 
         // Then
         createdArticle.articleId shouldNotBe 0L
@@ -61,7 +62,7 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val createdArticle = createArticleService.create(command)
+        val createdArticle = createArticleFacade.create(command)
 
         // Then
         val savedArticle = fakeRepository.findById(createdArticle.articleId)
@@ -85,8 +86,8 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val article1 = createArticleService.create(command1)
-        val article2 = createArticleService.create(command2)
+        val article1 = createArticleFacade.create(command1)
+        val article2 = createArticleFacade.create(command2)
 
         // Then
         article1.articleId shouldNotBe article2.articleId
@@ -102,7 +103,7 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val createdArticle = createArticleService.create(command)
+        val createdArticle = createArticleFacade.create(command)
 
         // Then
         createdArticle.title shouldBe ""
@@ -121,7 +122,7 @@ class CreateArticleServiceTest : StringSpec({
         )
 
         // When
-        val createdArticle = createArticleService.create(command)
+        val createdArticle = createArticleFacade.create(command)
 
         // Then
         createdArticle.createdAt shouldBe createdArticle.modifiedAt

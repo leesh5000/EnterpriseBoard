@@ -1,4 +1,4 @@
-package me.helloc.enterpriseboard.application.service
+package me.helloc.enterpriseboard.application.facade
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
@@ -6,16 +6,17 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.application.facade.UpdateArticleFacade
 import java.time.LocalDateTime
 
-class UpdateArticleServiceTest : StringSpec({
+class UpdateArticleFacadeTest : StringSpec({
 
     lateinit var fakeRepository: FakeArticleRepository
-    lateinit var updateArticleService: UpdateArticleService
+    lateinit var updateArticleFacade: UpdateArticleFacade
 
     beforeEach {
         fakeRepository = FakeArticleRepository()
-        updateArticleService = UpdateArticleService(fakeRepository)
+        updateArticleFacade = UpdateArticleFacade(fakeRepository)
     }
 
     "기존 Article의 제목과 내용을 업데이트할 수 있어야 한다" {
@@ -36,7 +37,7 @@ class UpdateArticleServiceTest : StringSpec({
         )
 
         // When
-        val updatedArticle = updateArticleService.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(updateCommand)
 
         // Then
         updatedArticle.title shouldBe "수정된 제목"
@@ -65,7 +66,7 @@ class UpdateArticleServiceTest : StringSpec({
 
         // When
         Thread.sleep(1) // 시간 차이를 만들기 위해 잠시 대기
-        val updatedArticle = updateArticleService.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(updateCommand)
 
         // Then
         updatedArticle.modifiedAt shouldNotBe existingArticle.modifiedAt
@@ -90,7 +91,7 @@ class UpdateArticleServiceTest : StringSpec({
         )
 
         // When
-        val updatedArticle = updateArticleService.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(updateCommand)
 
         // Then
         val savedArticle = fakeRepository.findById(1L)
@@ -109,7 +110,7 @@ class UpdateArticleServiceTest : StringSpec({
 
         // When & Then
         val exception = shouldThrow<NoSuchElementException> {
-            updateArticleService.update(updateCommand)
+            updateArticleFacade.update(updateCommand)
         }
         exception.message shouldBe "Article not found with id: 999"
     }
@@ -132,7 +133,7 @@ class UpdateArticleServiceTest : StringSpec({
         )
 
         // When
-        val updatedArticle = updateArticleService.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(updateCommand)
 
         // Then
         updatedArticle.title shouldBe ""
@@ -165,7 +166,7 @@ class UpdateArticleServiceTest : StringSpec({
         )
 
         // When
-        updateArticleService.update(updateCommand)
+        updateArticleFacade.update(updateCommand)
 
         // Then
         val updatedArticle1 = fakeRepository.findById(1L)
