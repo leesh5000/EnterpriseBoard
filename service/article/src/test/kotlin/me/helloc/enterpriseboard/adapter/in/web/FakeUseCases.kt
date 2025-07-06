@@ -70,6 +70,25 @@ class FakeGetArticleUseCase : GetArticleUseCase {
     override fun getByWriterId(writerId: Long): List<Article> {
         return storage.values.filter { it.writerId == writerId }
     }
+    
+    override fun getPage(query: GetArticlePageQuery): GetArticlePageResult {
+        val offset = (query.page - 1) * query.pageSize
+        val articles = storage.values
+            .filter { it.boardId == query.boardId }
+            .sortedByDescending { it.articleId }
+            .drop(offset.toInt())
+            .take(query.pageSize.toInt())
+        
+        val totalCount = storage.values
+            .filter { it.boardId == query.boardId }
+            .count()
+            .toLong()
+        
+        return GetArticlePageResult(
+            articles = articles,
+            totalCount = totalCount
+        )
+    }
 }
 
 class FakeDeleteArticleUseCase : DeleteArticleUseCase {
