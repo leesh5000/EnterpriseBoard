@@ -31,6 +31,26 @@ class FakeArticleRepository : ArticleRepository {
         return storage.containsKey(articleId)
     }
 
+    override fun findAll(
+        boardId: Long,
+        offset: Long,
+        limit: Long,
+    ): List<Article> {
+        return storage.values
+            .filter { it.boardId == boardId }
+            .sortedByDescending { it.articleId }
+            .drop(offset.toInt())
+            .take(limit.toInt())
+    }
+
+    override fun countByBoardId(boardId: Long, limit: Long): Long {
+        return storage.values
+            .filter { it.boardId == boardId }
+            .take(limit.toInt())
+            .count()
+            .toLong()
+    }
+
     // 테스트를 위한 헬퍼 메서드
     fun clear() {
         storage.clear()
