@@ -1,11 +1,13 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
+import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticlePageResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.UpdateArticleRequest
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleUseCase
 import me.helloc.enterpriseboard.application.port.`in`.DeleteArticleUseCase
+import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleUseCase
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -27,7 +30,7 @@ class ArticleController(
     private val createArticleUseCase: CreateArticleUseCase,
     private val updateArticleUseCase: UpdateArticleUseCase,
     private val getArticleUseCase: GetArticleUseCase,
-    private val deleteArticleUseCase: DeleteArticleUseCase
+    private val deleteArticleUseCase: DeleteArticleUseCase,
 ) {
 
     @PostMapping
@@ -70,5 +73,29 @@ class ArticleController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteArticle(@PathVariable articleId: Long) {
         deleteArticleUseCase.delete(articleId)
+    }
+
+    @GetMapping
+    fun getArticlePage(
+        @RequestParam boardId: Long,
+        @RequestParam page: Long,
+        @RequestParam pageSize: Long,
+        @RequestParam(defaultValue = "10") movablePageCount: Long
+    ): ResponseEntity<ArticlePageResponse> {
+        val query = GetArticlePageQuery(
+            boardId = boardId,
+            page = page,
+            pageSize = pageSize,
+            movablePageCount = movablePageCount
+        )
+
+        val articlePage = getArticleUseCase.getPage(query)
+
+        val response = ArticlePageResponse.of(
+            articles = articlePage.articles.map { ArticleResponse.from(it) },
+            totalCount = articlePage.totalCount
+        )
+
+        return ResponseEntity.ok(response)
     }
 }
