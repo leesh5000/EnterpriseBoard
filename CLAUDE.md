@@ -79,7 +79,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **HEXAGONAL ARCHITECTURE (헥사고날 아키텍처)**
 이 프로젝트는 헥사고날 아키텍처(포트와 어댑터 패턴)를 따릅니다. 새로운 기능을 추가하거나 기존 코드를 수정할 때 반드시 이 구조를 유지해야 합니다.
 
-**프로젝트 구조 (Article 서비스 기준)**
+**프로젝트 구조**
 ```
 service/article/src/main/kotlin/me/helloc/enterpriseboard/
 ├── ArticleApplication.kt          # 🚀 Spring Boot 메인 애플리케이션
@@ -327,7 +327,7 @@ feat: 상품 리뷰 평점 시스템 도입
 **서비스 모듈 (service/)**
 - `service:article`: 게시글 CRUD 및 페이지네이션 (메인 구현체)
 - `service:comment`: 댓글 서비스 (미래 구현 예정)
-- `service:view`: 조회수 서비스 (미래 구현 예정) 
+- `service:view`: 조회수 서비스 (미래 구현 예정)
 - `service:like`: 좋아요 서비스 (미래 구현 예정)
 - `service:hot-article`: 인기 게시글 서비스 (미래 구현 예정)
 - `service:article-read`: 게시글 읽기 전용 서비스 (미래 구현 예정)
@@ -358,7 +358,7 @@ feat: 상품 리뷰 평점 시스템 도입
 ### 개발 팁
 **테스트 작성 시:**
 - 단위 테스트: Kotest StringSpec 스타일 사용
-- 통합 테스트: JUnit 5 + TestContainers 사용  
+- 통합 테스트: JUnit 5 + TestContainers 사용
 - 테스트 더블: Fake 구현체 활용 (Mock 프레임워크 지양)
 - Facade 테스트: UseCase 인터페이스 기반 단위 테스트
 
