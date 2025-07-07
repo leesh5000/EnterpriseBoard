@@ -1,19 +1,21 @@
 version: '3.8'
 
 services:
-  mysql:
+  database:
     image: mysql:8.0.38
-    container_name: mysql
+    container_name: article-database
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: board
+      MYSQL_DATABASE: article
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3306:3306"
+      - "33060:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -22,3 +24,7 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  network:
+    driver: bridge
