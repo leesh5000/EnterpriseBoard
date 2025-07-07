@@ -529,4 +529,264 @@ class ArticleIntegrationTest {
         val page2Ids = page2Response.body?.articles?.map { it.articleId }?.toSet()!!
         assert(page1Ids.intersect(page2Ids).isEmpty())
     }
+
+    @Test
+    fun `무한 스크롤 첫 페이지 조회 테스트`() {
+        // Given - 게시글 10개 생성
+        val boardId = 1L
+        val createdArticles = mutableListOf<Long>()
+        
+        for (i in 1..10) {
+            val request = CreateArticleRequest(
+                title = "스크롤 테스트 제목 $i",
+                content = "스크롤 테스트 내용 $i",
+                boardId = boardId,
+                writerId = 1L
+            )
+            
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+            val entity = HttpEntity(request, headers)
+            
+            val response: ResponseEntity<ArticleResponse> = restTemplate.postForEntity(
+                "http://localhost:$port/api/v1/articles",
+                entity,
+                ArticleResponse::class.java
+            )
+            
+            createdArticles.add(response.body?.articleId!!)
+        }
+
+        // When - 첫 페이지 무한 스크롤 조회
+        val scrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=0",
+            Array<ArticleResponse>::class.java
+        )
+
+        // Then
+        assert(scrollResponse.statusCode == HttpStatus.OK)
+        assert(scrollResponse.body?.size == 5)
+        
+        // ID 내림차순으로 정렬되어 있는지 확인
+        val articles = scrollResponse.body!!
+        for (i in 0 until articles.size - 1) {
+            assert(articles[i].articleId > articles[i + 1].articleId)
+        }
+        
+        // 가장 최근 생성된 게시글부터 조회되는지 확인
+        assert(articles[0].articleId == createdArticles.last())
+    }
+
+    @Test
+    fun `무한 스크롤 연속 페이지 조회 테스트`() {
+        // Given - 게시글 15개 생성
+        val boardId = 2L
+        val createdArticles = mutableListOf<Long>()
+        
+        for (i in 1..15) {
+            val request = CreateArticleRequest(
+                title = "연속 스크롤 제목 $i",
+                content = "연속 스크롤 내용 $i",
+                boardId = boardId,
+                writerId = 1L
+            )
+            
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+            val entity = HttpEntity(request, headers)
+            
+            val response: ResponseEntity<ArticleResponse> = restTemplate.postForEntity(
+                "http://localhost:$port/api/v1/articles",
+                entity,
+                ArticleResponse::class.java
+            )
+            
+            createdArticles.add(response.body?.articleId!!)
+        }
+
+        // When & Then - 연속적인 스크롤 시뮬레이션
+        var lastArticleId = 0L
+        val allScrolledArticles = mutableListOf<ArticleResponse>()
+        
+        // 첫 번째 스크롤
+        val firstScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=$lastArticleId",
+            Array<ArticleResponse>::class.java
+        )
+        assert(firstScrollResponse.statusCode == HttpStatus.OK)
+        assert(firstScrollResponse.body?.size == 5)
+        
+        val firstArticles = firstScrollResponse.body!!
+        allScrolledArticles.addAll(firstArticles)
+        lastArticleId = firstArticles.last().articleId
+        
+        // 두 번째 스크롤
+        val secondScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=$lastArticleId",
+            Array<ArticleResponse>::class.java
+        )
+        assert(secondScrollResponse.statusCode == HttpStatus.OK)
+        assert(secondScrollResponse.body?.size == 5)
+        
+        val secondArticles = secondScrollResponse.body!!
+        allScrolledArticles.addAll(secondArticles)
+        lastArticleId = secondArticles.last().articleId
+        
+        // 세 번째 스크롤
+        val thirdScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=$lastArticleId",
+            Array<ArticleResponse>::class.java
+        )
+        assert(thirdScrollResponse.statusCode == HttpStatus.OK)
+        assert(thirdScrollResponse.body?.size == 5)
+        
+        val thirdArticles = thirdScrollResponse.body!!
+        allScrolledArticles.addAll(thirdArticles)
+        
+        // 중복된 게시글이 없는지 확인
+        val uniqueIds = allScrolledArticles.map { it.articleId }.toSet()
+        assert(uniqueIds.size == allScrolledArticles.size)
+        
+        // 모든 게시글이 ID 내림차순으로 정렬되어 있는지 확인
+        for (i in 0 until allScrolledArticles.size - 1) {
+            assert(allScrolledArticles[i].articleId > allScrolledArticles[i + 1].articleId)
+        }
+    }
+
+    @Test
+    fun `무한 스크롤 다른 boardId 격리 테스트`() {
+        // Given - 서로 다른 boardId로 게시글 생성
+        val boardId1 = 3L
+        val boardId2 = 4L
+        
+        // boardId1에 5개 게시글 생성
+        for (i in 1..5) {
+            val request = CreateArticleRequest(
+                title = "Board1 제목 $i",
+                content = "Board1 내용 $i",
+                boardId = boardId1,
+                writerId = 1L
+            )
+            
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+            val entity = HttpEntity(request, headers)
+            
+            restTemplate.postForEntity(
+                "http://localhost:$port/api/v1/articles",
+                entity,
+                ArticleResponse::class.java
+            )
+        }
+        
+        // boardId2에 5개 게시글 생성
+        for (i in 1..5) {
+            val request = CreateArticleRequest(
+                title = "Board2 제목 $i",
+                content = "Board2 내용 $i",
+                boardId = boardId2,
+                writerId = 1L
+            )
+            
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+            val entity = HttpEntity(request, headers)
+            
+            restTemplate.postForEntity(
+                "http://localhost:$port/api/v1/articles",
+                entity,
+                ArticleResponse::class.java
+            )
+        }
+
+        // When - boardId1만 조회
+        val scrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId1&pageSize=10&lastArticleId=0",
+            Array<ArticleResponse>::class.java
+        )
+
+        // Then
+        assert(scrollResponse.statusCode == HttpStatus.OK)
+        assert(scrollResponse.body?.size == 5)
+        
+        // 모든 게시글이 boardId1에 속하는지 확인
+        val articles = scrollResponse.body!!
+        articles.forEach { article ->
+            assert(article.boardId == boardId1)
+            assert(article.title.startsWith("Board1"))
+        }
+    }
+
+    @Test
+    fun `무한 스크롤 빈 결과 테스트`() {
+        // Given - 존재하지 않는 boardId
+        val nonExistentBoardId = 999L
+
+        // When
+        val scrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$nonExistentBoardId&pageSize=10&lastArticleId=0",
+            Array<ArticleResponse>::class.java
+        )
+
+        // Then
+        assert(scrollResponse.statusCode == HttpStatus.OK)
+        assert(scrollResponse.body?.isEmpty() == true)
+    }
+
+    @Test
+    fun `무한 스크롤 마지막 페이지 도달 테스트`() {
+        // Given - 게시글 8개 생성
+        val boardId = 5L
+        val createdArticles = mutableListOf<Long>()
+        
+        for (i in 1..8) {
+            val request = CreateArticleRequest(
+                title = "마지막 페이지 제목 $i",
+                content = "마지막 페이지 내용 $i",
+                boardId = boardId,
+                writerId = 1L
+            )
+            
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+            val entity = HttpEntity(request, headers)
+            
+            val response: ResponseEntity<ArticleResponse> = restTemplate.postForEntity(
+                "http://localhost:$port/api/v1/articles",
+                entity,
+                ArticleResponse::class.java
+            )
+            
+            createdArticles.add(response.body?.articleId!!)
+        }
+
+        // When & Then
+        // 첫 번째 스크롤 - 5개 조회
+        val firstScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=0",
+            Array<ArticleResponse>::class.java
+        )
+        assert(firstScrollResponse.statusCode == HttpStatus.OK)
+        assert(firstScrollResponse.body?.size == 5)
+        
+        val lastArticleId = firstScrollResponse.body!!.last().articleId
+        
+        // 두 번째 스크롤 - 남은 3개만 조회
+        val secondScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=$lastArticleId",
+            Array<ArticleResponse>::class.java
+        )
+        assert(secondScrollResponse.statusCode == HttpStatus.OK)
+        assert(secondScrollResponse.body?.size == 3)
+        
+        val finalLastArticleId = secondScrollResponse.body!!.last().articleId
+        
+        // 세 번째 스크롤 - 더 이상 데이터 없음
+        val thirdScrollResponse: ResponseEntity<Array<ArticleResponse>> = restTemplate.getForEntity(
+            "http://localhost:$port/api/v1/articles/scroll?boardId=$boardId&pageSize=5&lastArticleId=$finalLastArticleId",
+            Array<ArticleResponse>::class.java
+        )
+        assert(thirdScrollResponse.statusCode == HttpStatus.OK)
+        assert(thirdScrollResponse.body?.isEmpty() == true)
+    }
 }

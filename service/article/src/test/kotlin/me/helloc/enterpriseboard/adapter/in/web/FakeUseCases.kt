@@ -7,12 +7,12 @@ import java.time.LocalDateTime
 class FakeCreateArticleUseCase : CreateArticleUseCase {
     var lastCommand: CreateArticleCommand? = null
     var articleToReturn: Article = createDefaultArticle()
-    
+
     override fun create(command: CreateArticleCommand): Article {
         lastCommand = command
         return articleToReturn
     }
-    
+
     private fun createDefaultArticle() = Article(
         articleId = 1L,
         title = "테스트 제목",
@@ -28,7 +28,7 @@ class FakeUpdateArticleUseCase : UpdateArticleUseCase {
     var lastCommand: UpdateArticleCommand? = null
     var shouldThrowException = false
     var articleToReturn: Article = createDefaultArticle()
-    
+
     override fun update(command: UpdateArticleCommand): Article {
         lastCommand = command
         if (shouldThrowException) {
@@ -36,7 +36,7 @@ class FakeUpdateArticleUseCase : UpdateArticleUseCase {
         }
         return articleToReturn
     }
-    
+
     private fun createDefaultArticle() = Article(
         articleId = 1L,
         title = "수정된 제목",
@@ -50,27 +50,27 @@ class FakeUpdateArticleUseCase : UpdateArticleUseCase {
 
 class FakeGetArticleUseCase : GetArticleUseCase {
     private val storage = mutableMapOf<Long, Article>()
-    
+
     fun addArticle(article: Article) {
         storage[article.articleId] = article
     }
-    
+
     fun clear() {
         storage.clear()
     }
-    
+
     override fun getById(articleId: Long): Article? {
         return storage[articleId]
     }
-    
+
     override fun getByBoardId(boardId: Long): List<Article> {
         return storage.values.filter { it.boardId == boardId }
     }
-    
+
     override fun getByWriterId(writerId: Long): List<Article> {
         return storage.values.filter { it.writerId == writerId }
     }
-    
+
     override fun getPage(query: GetArticlePageQuery): GetArticlePageResult {
         val offset = (query.page - 1) * query.pageSize
         val articles = storage.values
@@ -78,34 +78,48 @@ class FakeGetArticleUseCase : GetArticleUseCase {
             .sortedByDescending { it.articleId }
             .drop(offset.toInt())
             .take(query.pageSize.toInt())
-        
+
         val totalCount = storage.values
             .filter { it.boardId == query.boardId }
             .count()
             .toLong()
-        
+
         return GetArticlePageResult(
             articles = articles,
-            totalCount = totalCount
+            count = totalCount
         )
+    }
+
+    override fun getScroll(query: GetArticleScrollQuery): List<Article> {
+        return if (query.lastArticleId == 0L) {
+            storage.values
+                .filter { it.boardId == query.boardId }
+                .sortedByDescending { it.articleId }
+                .take(query.pageSize.toInt())
+        } else {
+            storage.values
+                .filter { it.boardId == query.boardId && it.articleId < query.lastArticleId }
+                .sortedByDescending { it.articleId }
+                .take(query.pageSize.toInt())
+        }
     }
 }
 
 class FakeDeleteArticleUseCase : DeleteArticleUseCase {
     var deletedArticleIds = mutableListOf<Long>()
     var shouldThrowException = false
-    
+
     override fun delete(articleId: Long) {
         if (shouldThrowException) {
             throw NoSuchElementException("Article not found with id: $articleId")
         }
         deletedArticleIds.add(articleId)
     }
-    
+
     fun wasDeleted(articleId: Long): Boolean {
         return articleId in deletedArticleIds
     }
-    
+
     fun reset() {
         deletedArticleIds.clear()
         shouldThrowException = false

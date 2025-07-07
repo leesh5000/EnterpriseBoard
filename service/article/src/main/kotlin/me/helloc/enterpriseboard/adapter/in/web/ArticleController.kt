@@ -8,6 +8,7 @@ import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleUseCase
 import me.helloc.enterpriseboard.application.port.`in`.DeleteArticleUseCase
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
+import me.helloc.enterpriseboard.application.port.`in`.GetArticleScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleUseCase
@@ -93,9 +94,27 @@ class ArticleController(
 
         val response = ArticlePageResponse.of(
             articles = articlePage.articles.map { ArticleResponse.from(it) },
-            totalCount = articlePage.totalCount
+            totalCount = articlePage.count
         )
 
         return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/scroll")
+    fun getArticleScroll(
+        @RequestParam boardId: Long,
+        @RequestParam pageSize: Long,
+        @RequestParam(defaultValue = "0") lastArticleId: Long
+    ): ResponseEntity<List<ArticleResponse>> {
+
+        val query = GetArticleScrollQuery(
+            boardId = boardId,
+            pageSize = pageSize,
+            lastArticleId = lastArticleId
+        )
+
+        val articles = getArticleUseCase.getScroll(query)
+        val responses = articles.map { ArticleResponse.from(it) }
+        return ResponseEntity.ok(responses)
     }
 }

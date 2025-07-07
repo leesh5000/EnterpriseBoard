@@ -51,6 +51,27 @@ class FakeArticleRepository : ArticleRepository {
             .toLong()
     }
 
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+    ): List<Article> {
+        return storage.values
+            .filter { it.boardId == boardId }
+            .sortedByDescending { it.articleId }
+            .take(limit.toInt())
+    }
+
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+        lastArticleId: Long,
+    ): List<Article> {
+        return storage.values
+            .filter { it.boardId == boardId && it.articleId < lastArticleId }
+            .sortedByDescending { it.articleId }
+            .take(limit.toInt())
+    }
+
     // 테스트를 위한 헬퍼 메서드
     fun clear() {
         storage.clear()

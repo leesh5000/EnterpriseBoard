@@ -2,6 +2,7 @@ package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageResult
+import me.helloc.enterpriseboard.application.port.`in`.GetArticleScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
@@ -41,14 +42,31 @@ class GetArticleFacade(
             limit = query.pageSize
         )
 
-        val totalCount = articleRepository.countByBoardId(
+        val count = articleRepository.countByBoardId(
             boardId = query.boardId,
             limit = limit
         )
 
         return GetArticlePageResult(
             articles = articles,
-            totalCount = totalCount
+            count = count
         )
+    }
+
+    override fun getScroll(query: GetArticleScrollQuery): List<Article> {
+        val articles = if (query.lastArticleId == 0L) {
+            articleRepository.findAllInfiniteScroll(
+                boardId = query.boardId,
+                limit = query.pageSize
+            )
+        } else {
+            articleRepository.findAllInfiniteScroll(
+                boardId = query.boardId,
+                limit = query.pageSize,
+                lastArticleId = query.lastArticleId
+            )
+        }
+
+        return articles
     }
 }

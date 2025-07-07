@@ -7,6 +7,7 @@ interface GetArticleUseCase {
     fun getByBoardId(boardId: Long): List<Article>
     fun getByWriterId(writerId: Long): List<Article>
     fun getPage(query: GetArticlePageQuery): GetArticlePageResult
+    fun getScroll(query: GetArticleScrollQuery): List<Article>
 }
 
 data class GetArticlePageQuery(
@@ -16,7 +17,13 @@ data class GetArticlePageQuery(
     val movablePageCount: Long
 )
 
+data class GetArticleScrollQuery(
+    val boardId: Long,
+    val pageSize: Long,
+    val lastArticleId: Long
+)
+
 data class GetArticlePageResult(
     val articles: List<Article>,
-    val totalCount: Long
+    val count: Long
 )

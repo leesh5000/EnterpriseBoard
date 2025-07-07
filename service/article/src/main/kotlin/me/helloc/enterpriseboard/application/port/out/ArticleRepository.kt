@@ -11,4 +11,6 @@ interface ArticleRepository {
     fun existsById(articleId: Long): Boolean
     fun findAll(boardId: Long, offset: Long, limit: Long): List<Article>
     fun countByBoardId(boardId: Long, limit: Long): Long
+    fun findAllInfiniteScroll(boardId: Long, limit: Long): List<Article>
+    fun findAllInfiniteScroll(boardId: Long, limit: Long, lastArticleId: Long): List<Article>
 }
