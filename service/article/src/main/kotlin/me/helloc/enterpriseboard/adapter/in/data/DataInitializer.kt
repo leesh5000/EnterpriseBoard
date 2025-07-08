@@ -117,17 +117,8 @@ class DataInitializer {
     private fun createUniqueArticle(index: Int): Triple<Long, String, String> {
         val articleId = snowflake.nextId()
         val uniqueId = UUID.randomUUID().toString().substring(0, 8)
-        val timestamp = System.currentTimeMillis()
-
         val title = "게시글 제목 ${String.format("%07d", index)} - $uniqueId"
-        val content = buildString {
-            append("게시글 내용 ${String.format("%07d", index)} - $timestamp\n")
-            append("고유 식별자: $uniqueId\n")
-            append("생성 시각: ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))}\n")
-            append("랜덤 데이터: ${generateRandomContent()}\n")
-            append("해시값: ${(title + timestamp).hashCode()}\n")
-        }
-
+        val content = generateRandomContent()
         return Triple(articleId, title, content)
     }
 
