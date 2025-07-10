@@ -97,4 +97,46 @@ class CommentTest : StringSpec({
         rootComment.isRoot() shouldBe true
         replyComment.isRoot() shouldBe false
     }
+
+    "RealComment는 존재하는 댓글로 인식되어야 한다" {
+        // Given
+        val comment = Comment.create(
+            commentId = 1L,
+            content = "실제 댓글",
+            articleId = 100L,
+            writerId = 200L
+        )
+
+        // When & Then
+        comment.exists() shouldBe true
+        comment.isNull() shouldBe false
+    }
+
+    "NullComment는 존재하지 않는 댓글로 인식되어야 한다" {
+        // Given
+        val nullComment = Comment.empty()
+
+        // When & Then
+        nullComment.exists() shouldBe false
+        nullComment.isNull() shouldBe true
+        nullComment.commentId shouldBe -1L
+        nullComment.content shouldBe ""
+        nullComment.articleId shouldBe -1L
+        nullComment.writerId shouldBe -1L
+    }
+
+    "NullComment는 수정하거나 삭제해도 그대로 유지되어야 한다" {
+        // Given
+        val nullComment = Comment.empty()
+
+        // When
+        val updatedComment = nullComment.update("새로운 내용")
+        val deletedComment = nullComment.delete()
+
+        // Then
+        updatedComment shouldBe nullComment
+        deletedComment shouldBe nullComment
+        updatedComment.content shouldBe ""
+        deletedComment.deleted shouldBe false
+    }
 })

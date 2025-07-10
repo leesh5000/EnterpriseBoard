@@ -2,6 +2,7 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.application.port.`in`.*
 import me.helloc.enterpriseboard.domain.model.Comment
+import me.helloc.enterpriseboard.domain.model.RealComment
 import java.time.LocalDateTime
 
 class FakeCreateCommentUseCase : CreateCommentUseCase {
@@ -13,15 +14,12 @@ class FakeCreateCommentUseCase : CreateCommentUseCase {
         return commentToReturn
     }
 
-    private fun createDefaultComment() = Comment(
+    private fun createDefaultComment() = Comment.create(
         commentId = 1L,
         content = "테스트 댓글",
         parentCommentId = 1L,
         articleId = 100L,
-        writerId = 200L,
-        deleted = false,
-        createdAt = LocalDateTime.now(),
-        modifiedAt = LocalDateTime.now()
+        writerId = 200L
     )
 }
 
@@ -38,15 +36,12 @@ class FakeUpdateCommentUseCase : UpdateCommentUseCase {
         return commentToReturn
     }
 
-    private fun createDefaultComment() = Comment(
+    private fun createDefaultComment() = Comment.create(
         commentId = 1L,
         content = "수정된 댓글",
         parentCommentId = 1L,
         articleId = 100L,
-        writerId = 200L,
-        deleted = false,
-        createdAt = LocalDateTime.now().minusDays(1),
-        modifiedAt = LocalDateTime.now()
+        writerId = 200L
     )
 }
 
@@ -61,8 +56,8 @@ class FakeGetCommentUseCase : GetCommentUseCase {
         storage.clear()
     }
 
-    override fun getById(commentId: Long): Comment? {
-        return storage[commentId]
+    override fun getById(commentId: Long): Comment {
+        return storage[commentId] ?: Comment.empty()
     }
 
     override fun getByArticleId(articleId: Long): List<Comment> {
