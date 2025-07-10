@@ -18,7 +18,7 @@ class CommentJpaAdapter(
     override fun findById(commentId: Long): Comment {
         return commentJpaRepository.findById(commentId)
             .map { it.toDomainModel() }
-            .orElse(Comment.empty())
+            .orElse(Comment.nullComment())
     }
 
     override fun findByArticleId(articleId: Long): List<Comment> {

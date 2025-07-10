@@ -1,29 +1,61 @@
 package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.common.snowflake.Snowflake
-import me.helloc.enterpriseboard.application.port.`in`.CreateCommentCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateCommentUseCase
 import me.helloc.enterpriseboard.application.port.out.CommentRepository
 import me.helloc.enterpriseboard.domain.model.Comment
-import org.springframework.stereotype.Service
+import me.helloc.enterpriseboard.domain.model.NullComment
+import me.helloc.enterpriseboard.domain.service.RootCommentValidator
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 @Transactional
 class CreateCommentFacade(
-    private val commentRepository: CommentRepository,
-    private val snowflake: Snowflake
+    private val repository: CommentRepository,
+    private val rootCommentValidator: RootCommentValidator,
 ) : CreateCommentUseCase {
 
-    override fun create(command: CreateCommentCommand): Comment {
+    private val snowflake: Snowflake = Snowflake()
+
+    override fun create(content: String, parentCommentId: Long, articleId: Long, writerId: Long): Comment {
+        return if (parentCommentId == NullComment.commentId) {
+            createRootComment(content, articleId, writerId)
+        } else {
+            createChildComment(parentCommentId, content, articleId, writerId)
+        }
+    }
+
+    private fun createChildComment(
+        parentCommentId: Long,
+        content: String,
+        articleId: Long,
+        writerId: Long,
+    ): Comment {
+        val parent: Comment = repository.findById(parentCommentId)
+        rootCommentValidator.validate(parent)
         val comment = Comment.create(
             commentId = snowflake.nextId(),
-            content = command.content,
-            parentCommentId = command.parentCommentId,
-            articleId = command.articleId,
-            writerId = command.writerId
+            content = content,
+            parentCommentId = parent.commentId,
+            articleId = articleId,
+            writerId = writerId
         )
-        
-        return commentRepository.save(comment)
+        return repository.save(comment)
+    }
+
+    private fun createRootComment(
+        content: String,
+        articleId: Long,
+        writerId: Long,
+    ): Comment {
+        val comment = Comment.create(
+            commentId = snowflake.nextId(),
+            content = content,
+            parentCommentId = NullComment.commentId,
+            articleId = articleId,
+            writerId = writerId
+        )
+        return repository.save(comment)
     }
 }

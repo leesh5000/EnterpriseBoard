@@ -16,14 +16,14 @@ sealed class Comment {
     abstract fun delete(): Comment
     abstract fun isRoot(): Boolean
     abstract fun exists(): Boolean
-    
+
     fun isNull(): Boolean = !exists()
 
     companion object {
         fun create(
             commentId: Long,
             content: String,
-            parentCommentId: Long = 0L, // 0L indicates no parent comment
+            parentCommentId: Long = NullComment.commentId, // 0L indicates no parent comment
             articleId: Long,
             writerId: Long,
         ): RealComment {
@@ -31,7 +31,7 @@ sealed class Comment {
             return RealComment(
                 commentId = commentId,
                 content = content,
-                parentCommentId = if (parentCommentId == 0L) commentId else parentCommentId,
+                parentCommentId = if (parentCommentId == NullComment.commentId) commentId else parentCommentId,
                 articleId = articleId,
                 writerId = writerId,
                 deleted = false,
@@ -40,7 +40,7 @@ sealed class Comment {
             )
         }
 
-        fun empty(): NullComment = NullComment
+        fun nullComment(): NullComment = NullComment
     }
 }
 
@@ -54,17 +54,17 @@ data class RealComment(
     override val createdAt: LocalDateTime,
     override val modifiedAt: LocalDateTime,
 ) : Comment() {
-    
+
     override fun update(content: String): RealComment {
         return this.copy(
-            content = content, 
+            content = content,
             modifiedAt = LocalDateTime.now()
         )
     }
 
     override fun delete(): RealComment {
         return this.copy(
-            deleted = true, 
+            deleted = true,
             modifiedAt = LocalDateTime.now()
         )
     }
@@ -90,7 +90,7 @@ object NullComment : Comment() {
 
     override fun delete(): NullComment = this
 
-    override fun isRoot(): Boolean = false
+    override fun isRoot(): Boolean = true
 
     override fun exists(): Boolean = false
 }
