@@ -3,7 +3,6 @@ package me.helloc.enterpriseboard.domain.model
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.LocalDateTime
 
 class CommentTest : StringSpec({
 
@@ -114,7 +113,7 @@ class CommentTest : StringSpec({
 
     "NullComment는 존재하지 않는 댓글로 인식되어야 한다" {
         // Given
-        val nullComment = Comment.empty()
+        val nullComment = Comment.nullComment()
 
         // When & Then
         nullComment.exists() shouldBe false
@@ -127,7 +126,7 @@ class CommentTest : StringSpec({
 
     "NullComment는 수정하거나 삭제해도 그대로 유지되어야 한다" {
         // Given
-        val nullComment = Comment.empty()
+        val nullComment = Comment.nullComment()
 
         // When
         val updatedComment = nullComment.update("새로운 내용")

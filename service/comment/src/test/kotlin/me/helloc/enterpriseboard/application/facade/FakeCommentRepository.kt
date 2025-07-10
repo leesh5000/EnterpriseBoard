@@ -12,7 +12,7 @@ class FakeCommentRepository : CommentRepository {
     }
 
     override fun findById(commentId: Long): Comment {
-        return storage[commentId] ?: Comment.empty()
+        return storage[commentId] ?: Comment.nullComment()
     }
 
     override fun findByArticleId(articleId: Long): List<Comment> {
