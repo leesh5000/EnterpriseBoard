@@ -1,16 +1,14 @@
 package me.helloc.enterpriseboard.application.facade
 
-import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageResult
-import me.helloc.enterpriseboard.application.port.`in`.GetArticleScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
 import me.helloc.enterpriseboard.domain.service.PageLimitCalculator
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 @Transactional(readOnly = true)
 class GetArticleFacade(
     private val articleRepository: ArticleRepository
@@ -28,42 +26,42 @@ class GetArticleFacade(
         return articleRepository.findByWriterId(writerId)
     }
 
-    override fun getPage(query: GetArticlePageQuery): GetArticlePageResult {
-        val offset = (query.page - 1) * query.pageSize
+    override fun getPage(boardId: Long, page: Long, pageSize: Long, movablePageCount: Long): GetArticlePageResult {
+        val offset = (page - 1) * pageSize
         val limit = PageLimitCalculator.calculate(
-            page = query.page,
-            pageSize = query.pageSize,
-            movablePageCount = query.movablePageCount
+            page = page,
+            pageSize = pageSize,
+            movablePageCount = movablePageCount
         )
 
         val articles = articleRepository.findAll(
-            boardId = query.boardId,
+            boardId = boardId,
             offset = offset,
-            limit = query.pageSize
+            limit = pageSize
         )
 
-        val count = articleRepository.countByBoardId(
-            boardId = query.boardId,
+        val limitedTotalCount = articleRepository.countByBoardId(
+            boardId = boardId,
             limit = limit
         )
 
         return GetArticlePageResult(
             articles = articles,
-            count = count
+            limitedTotalCount = limitedTotalCount
         )
     }
 
-    override fun getScroll(query: GetArticleScrollQuery): List<Article> {
-        val articles = if (query.lastArticleId == 0L) {
+    override fun getScroll(boardId: Long, pageSize: Long, lastArticleId: Long): List<Article> {
+        val articles = if (lastArticleId == 0L) {
             articleRepository.findAllInfiniteScroll(
-                boardId = query.boardId,
-                limit = query.pageSize
+                boardId = boardId,
+                limit = pageSize
             )
         } else {
             articleRepository.findAllInfiniteScroll(
-                boardId = query.boardId,
-                limit = query.pageSize,
-                lastArticleId = query.lastArticleId
+                boardId = boardId,
+                limit = pageSize,
+                lastArticleId = lastArticleId
             )
         }
 

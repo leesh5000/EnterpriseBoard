@@ -2,7 +2,6 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
-import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,14 +18,13 @@ class CreateArticleController(
 
     @PostMapping
     fun createArticle(@RequestBody request: CreateArticleRequest): ResponseEntity<ArticleResponse> {
-        val command = CreateArticleCommand(
+        val article = useCase.create(
             title = request.title,
             content = request.content,
             boardId = request.boardId,
             writerId = request.writerId
         )
-
-        val article = useCase.create(command)
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(ArticleResponse.from(article))
     }
 }

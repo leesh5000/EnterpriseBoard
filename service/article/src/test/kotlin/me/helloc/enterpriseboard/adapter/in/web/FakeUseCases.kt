@@ -7,11 +7,17 @@ import me.helloc.enterpriseboard.domain.model.RealArticle
 import java.time.LocalDateTime
 
 class FakeCreateArticleUseCase : CreateArticleUseCase {
-    var lastCommand: CreateArticleCommand? = null
+    var lastTitle: String? = null
+    var lastContent: String? = null
+    var lastBoardId: Long? = null
+    var lastWriterId: Long? = null
     var articleToReturn: Article = createDefaultArticle()
 
-    override fun create(command: CreateArticleCommand): Article {
-        lastCommand = command
+    override fun create(title: String, content: String, boardId: Long, writerId: Long): Article {
+        lastTitle = title
+        lastContent = content
+        lastBoardId = boardId
+        lastWriterId = writerId
         return articleToReturn
     }
 
@@ -27,14 +33,18 @@ class FakeCreateArticleUseCase : CreateArticleUseCase {
 }
 
 class FakeUpdateArticleUseCase : UpdateArticleUseCase {
-    var lastCommand: UpdateArticleCommand? = null
+    var lastArticleId: Long? = null
+    var lastTitle: String? = null
+    var lastContent: String? = null
     var shouldThrowException = false
     var articleToReturn: Article = createDefaultArticle()
 
-    override fun update(command: UpdateArticleCommand): Article {
-        lastCommand = command
+    override fun update(articleId: Long, title: String, content: String): Article {
+        lastArticleId = articleId
+        lastTitle = title
+        lastContent = content
         if (shouldThrowException) {
-            throw NoSuchElementException("Article not found with id: ${command.articleId}")
+            throw NoSuchElementException("Article not found with id: $articleId")
         }
         return articleToReturn
     }
@@ -73,36 +83,36 @@ class FakeGetArticleUseCase : GetArticleUseCase {
         return storage.values.filter { it.writerId == writerId }
     }
 
-    override fun getPage(query: GetArticlePageQuery): GetArticlePageResult {
-        val offset = (query.page - 1) * query.pageSize
+    override fun getPage(boardId: Long, page: Long, pageSize: Long, movablePageCount: Long): GetArticlePageResult {
+        val offset = (page - 1) * pageSize
         val articles = storage.values
-            .filter { it.boardId == query.boardId }
+            .filter { it.boardId == boardId }
             .sortedByDescending { it.articleId }
             .drop(offset.toInt())
-            .take(query.pageSize.toInt())
+            .take(pageSize.toInt())
 
         val totalCount = storage.values
-            .filter { it.boardId == query.boardId }
+            .filter { it.boardId == boardId }
             .count()
             .toLong()
 
         return GetArticlePageResult(
             articles = articles,
-            count = totalCount
+            limitedTotalCount = totalCount
         )
     }
 
-    override fun getScroll(query: GetArticleScrollQuery): List<Article> {
-        return if (query.lastArticleId == 0L) {
+    override fun getScroll(boardId: Long, pageSize: Long, lastArticleId: Long): List<Article> {
+        return if (lastArticleId == 0L) {
             storage.values
-                .filter { it.boardId == query.boardId }
+                .filter { it.boardId == boardId }
                 .sortedByDescending { it.articleId }
-                .take(query.pageSize.toInt())
+                .take(pageSize.toInt())
         } else {
             storage.values
-                .filter { it.boardId == query.boardId && it.articleId < query.lastArticleId }
+                .filter { it.boardId == boardId && it.articleId < lastArticleId }
                 .sortedByDescending { it.articleId }
-                .take(query.pageSize.toInt())
+                .take(pageSize.toInt())
         }
     }
 }

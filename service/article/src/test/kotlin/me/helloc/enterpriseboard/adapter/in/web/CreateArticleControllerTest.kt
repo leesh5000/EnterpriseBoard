@@ -65,11 +65,10 @@ class CreateArticleControllerTest : StringSpec({
         controller.createArticle(request)
 
         // Then
-        fakeCreateUseCase.lastCommand shouldNotBe null
-        fakeCreateUseCase.lastCommand?.title shouldBe request.title
-        fakeCreateUseCase.lastCommand?.content shouldBe request.content
-        fakeCreateUseCase.lastCommand?.boardId shouldBe request.boardId
-        fakeCreateUseCase.lastCommand?.writerId shouldBe request.writerId
+        fakeCreateUseCase.lastTitle shouldBe request.title
+        fakeCreateUseCase.lastContent shouldBe request.content
+        fakeCreateUseCase.lastBoardId shouldBe request.boardId
+        fakeCreateUseCase.lastWriterId shouldBe request.writerId
     }
 
     "POST /api/v1/articles - 생성된 Article이 올바른 Response로 변환되어야 한다" {

@@ -1,14 +1,13 @@
 package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.common.snowflake.Snowflake
-import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 @Transactional
 class CreateArticleFacade(
     private val articleRepository: ArticleRepository
@@ -16,15 +15,15 @@ class CreateArticleFacade(
 
     private val snowflake: Snowflake = Snowflake()
 
-    override fun create(command: CreateArticleCommand): Article {
+    override fun create(title: String, content: String, boardId: Long, writerId: Long): Article {
         val article = Article.create(
             articleId = snowflake.nextId(),
-            title = command.title,
-            content = command.content,
-            boardId = command.boardId,
-            writerId = command.writerId
+            title = title,
+            content = content,
+            boardId = boardId,
+            writerId = writerId
         )
-        
+
         return articleRepository.save(article)
     }
 }

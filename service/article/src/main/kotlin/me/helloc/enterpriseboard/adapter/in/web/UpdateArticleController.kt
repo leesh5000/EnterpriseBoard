@@ -2,7 +2,6 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.UpdateArticleRequest
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
-import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,13 +21,12 @@ class UpdateArticleController(
         @PathVariable articleId: Long,
         @RequestBody request: UpdateArticleRequest
     ): ResponseEntity<ArticleResponse> {
-        val command = UpdateArticleCommand(
+        val article = useCase.update(
             articleId = articleId,
             title = request.title,
             content = request.content
         )
-
-        val article = useCase.update(command)
+        
         return ResponseEntity.ok(ArticleResponse.from(article))
     }
 }

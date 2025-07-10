@@ -6,9 +6,6 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
-import me.helloc.enterpriseboard.application.port.`in`.GetArticleScrollQuery
-import me.helloc.enterpriseboard.domain.model.Article
 import me.helloc.enterpriseboard.domain.model.NullArticle
 import me.helloc.enterpriseboard.domain.model.RealArticle
 import java.time.LocalDateTime
@@ -220,20 +217,13 @@ class GetArticleFacadeTest : StringSpec({
         fakeRepository.save(article2)
         fakeRepository.save(article3)
 
-        val query = GetArticlePageQuery(
-            boardId = 100L,
-            page = 1L,
-            pageSize = 2L,
-            movablePageCount = 10L
-        )
-
         // When
-        val result = getArticleFacade.getPage(query)
+        val result = getArticleFacade.getPage(100L, 1L, 2L, 10L)
 
         // Then
         result.articles shouldHaveSize 2
         result.articles shouldContainExactlyInAnyOrder listOf(article3, article2) // ID 내림차순 정렬
-        result.count shouldBe 3L // 전체 카운트는 limit에 의해 제한됨
+        result.limitedTotalCount shouldBe 3L // 전체 카운트는 limit에 의해 제한됨
     }
 
     "첫 번째 페이지 조회 시 offset이 0이어야 한다" {
@@ -249,15 +239,8 @@ class GetArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(article)
 
-        val query = GetArticlePageQuery(
-            boardId = 100L,
-            page = 1L,
-            pageSize = 10L,
-            movablePageCount = 5L
-        )
-
         // When
-        val result = getArticleFacade.getPage(query)
+        val result = getArticleFacade.getPage(100L, 1L, 10L, 5L)
 
         // Then
         result.articles shouldHaveSize 1
@@ -279,15 +262,8 @@ class GetArticleFacadeTest : StringSpec({
         }
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticlePageQuery(
-            boardId = 100L,
-            page = 2L,
-            pageSize = 2L,
-            movablePageCount = 10L
-        )
-
         // When
-        val result = getArticleFacade.getPage(query)
+        val result = getArticleFacade.getPage(100L, 2L, 2L, 10L)
 
         // Then
         result.articles shouldHaveSize 2
@@ -310,19 +286,12 @@ class GetArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(article)
 
-        val query = GetArticlePageQuery(
-            boardId = 999L,
-            page = 1L,
-            pageSize = 10L,
-            movablePageCount = 5L
-        )
-
         // When
-        val result = getArticleFacade.getPage(query)
+        val result = getArticleFacade.getPage(999L, 1L, 10L, 5L)
 
         // Then
         result.articles.shouldBeEmpty()
-        result.count shouldBe 0L
+        result.limitedTotalCount shouldBe 0L
     }
 
     "페이지 크기보다 적은 데이터가 있을 때 실제 데이터 개수만 반환해야 한다" {
@@ -348,15 +317,8 @@ class GetArticleFacadeTest : StringSpec({
         fakeRepository.save(article1)
         fakeRepository.save(article2)
 
-        val query = GetArticlePageQuery(
-            boardId = 100L,
-            page = 1L,
-            pageSize = 10L,
-            movablePageCount = 5L
-        )
-
         // When
-        val result = getArticleFacade.getPage(query)
+        val result = getArticleFacade.getPage(100L, 1L, 10L, 5L)
 
         // Then
         result.articles shouldHaveSize 2
@@ -378,14 +340,8 @@ class GetArticleFacadeTest : StringSpec({
         }
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 100L,
-            pageSize = 3L,
-            lastArticleId = 0L
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(100L, 3L, 0L)
 
         // Then
         result shouldHaveSize 3
@@ -410,14 +366,8 @@ class GetArticleFacadeTest : StringSpec({
         }
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 100L,
-            pageSize = 3L,
-            lastArticleId = 7L
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(100L, 3L, 7L)
 
         // Then
         result shouldHaveSize 3
@@ -438,14 +388,8 @@ class GetArticleFacadeTest : StringSpec({
         )
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 100L,
-            pageSize = 10L,
-            lastArticleId = 0L
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(100L, 10L, 0L)
 
         // Then
         result shouldHaveSize 3
@@ -463,14 +407,8 @@ class GetArticleFacadeTest : StringSpec({
         )
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 100L,
-            pageSize = 5L,
-            lastArticleId = 0L
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(100L, 5L, 0L)
 
         // Then
         result shouldHaveSize 2
@@ -493,14 +431,8 @@ class GetArticleFacadeTest : StringSpec({
         }
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 100L,
-            pageSize = 5L,
-            lastArticleId = 1L  // 가장 작은 ID
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(100L, 5L, 1L)  // 가장 작은 ID
 
         // Then
         result.shouldBeEmpty()
@@ -521,14 +453,8 @@ class GetArticleFacadeTest : StringSpec({
         }
         articles.forEach { fakeRepository.save(it) }
 
-        val query = GetArticleScrollQuery(
-            boardId = 999L,  // 존재하지 않는 boardId
-            pageSize = 5L,
-            lastArticleId = 0L
-        )
-
         // When
-        val result = getArticleFacade.getScroll(query)
+        val result = getArticleFacade.getScroll(999L, 5L, 0L)  // 존재하지 않는 boardId
 
         // Then
         result.shouldBeEmpty()
@@ -550,36 +476,28 @@ class GetArticleFacadeTest : StringSpec({
         articles.forEach { fakeRepository.save(it) }
 
         // When - 첫 번째 스크롤
-        val firstScroll = getArticleFacade.getScroll(
-            GetArticleScrollQuery(boardId = 100L, pageSize = 4L, lastArticleId = 0L)
-        )
+        val firstScroll = getArticleFacade.getScroll(100L, 4L, 0L)
 
         // Then
         firstScroll shouldHaveSize 4
         firstScroll.map { it.articleId } shouldBe listOf(10L, 9L, 8L, 7L)
 
         // When - 두 번째 스크롤
-        val secondScroll = getArticleFacade.getScroll(
-            GetArticleScrollQuery(boardId = 100L, pageSize = 4L, lastArticleId = 7L)
-        )
+        val secondScroll = getArticleFacade.getScroll(100L, 4L, 7L)
 
         // Then
         secondScroll shouldHaveSize 4
         secondScroll.map { it.articleId } shouldBe listOf(6L, 5L, 4L, 3L)
 
         // When - 세 번째 스크롤 (마지막)
-        val thirdScroll = getArticleFacade.getScroll(
-            GetArticleScrollQuery(boardId = 100L, pageSize = 4L, lastArticleId = 3L)
-        )
+        val thirdScroll = getArticleFacade.getScroll(100L, 4L, 3L)
 
         // Then
         thirdScroll shouldHaveSize 2  // 남은 데이터는 2개뿐
         thirdScroll.map { it.articleId } shouldBe listOf(2L, 1L)
 
         // When - 네 번째 스크롤 (더 이상 데이터 없음)
-        val fourthScroll = getArticleFacade.getScroll(
-            GetArticleScrollQuery(boardId = 100L, pageSize = 4L, lastArticleId = 1L)
-        )
+        val fourthScroll = getArticleFacade.getScroll(100L, 4L, 1L)
 
         // Then
         fourthScroll.shouldBeEmpty()

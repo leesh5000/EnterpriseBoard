@@ -1,7 +1,6 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
-import me.helloc.enterpriseboard.application.port.`in`.GetArticleScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,13 +21,7 @@ class GetArticleScrollController(
         @RequestParam(defaultValue = "0") lastArticleId: Long
     ): ResponseEntity<List<ArticleResponse>> {
 
-        val query = GetArticleScrollQuery(
-            boardId = boardId,
-            pageSize = pageSize,
-            lastArticleId = lastArticleId
-        )
-
-        val articles = useCase.getScroll(query)
+        val articles = useCase.getScroll(boardId, pageSize, lastArticleId)
         val responses = articles.map { ArticleResponse.from(it) }
         return ResponseEntity.ok(responses)
     }

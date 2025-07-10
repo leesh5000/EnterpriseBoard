@@ -2,7 +2,6 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
-import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,18 +22,11 @@ class GetArticlePageController(
         @RequestParam pageSize: Long,
         @RequestParam(defaultValue = "10") movablePageCount: Long
     ): ResponseEntity<GetArticlePageResponse> {
-        val query = GetArticlePageQuery(
-            boardId = boardId,
-            page = page,
-            pageSize = pageSize,
-            movablePageCount = movablePageCount
-        )
-
-        val articlePage = useCase.getPage(query)
+        val articlePage = useCase.getPage(boardId, page, pageSize, movablePageCount)
 
         val response = GetArticlePageResponse.of(
             articles = articlePage.articles.map { ArticleResponse.from(it) },
-            totalCount = articlePage.count
+            totalCount = articlePage.limitedTotalCount
         )
 
         return ResponseEntity.ok(response)

@@ -3,7 +3,6 @@ package me.helloc.enterpriseboard.application.facade
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.domain.model.Article
 
 class UpdateArticleFacadeTest : StringSpec({
@@ -27,14 +26,12 @@ class UpdateArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(existingArticle)
 
-        val updateCommand = UpdateArticleCommand(
-            articleId = 1L,
-            title = "수정된 제목",
-            content = "수정된 내용"
-        )
+        val articleId = 1L
+        val title = "수정된 제목"
+        val content = "수정된 내용"
 
         // When
-        val updatedArticle = updateArticleFacade.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(articleId, title, content)
 
         // Then
         updatedArticle.title shouldBe "수정된 제목"
@@ -55,15 +52,13 @@ class UpdateArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(existingArticle)
 
-        val updateCommand = UpdateArticleCommand(
-            articleId = 1L,
-            title = "수정된 제목",
-            content = "수정된 내용"
-        )
+        val articleId = 1L
+        val title = "수정된 제목"
+        val content = "수정된 내용"
 
         // When
         Thread.sleep(1) // 시간 차이를 만들기 위해 잠시 대기
-        val updatedArticle = updateArticleFacade.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(articleId, title, content)
 
         // Then
         updatedArticle.modifiedAt shouldNotBe existingArticle.modifiedAt
@@ -81,14 +76,12 @@ class UpdateArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(existingArticle)
 
-        val updateCommand = UpdateArticleCommand(
-            articleId = 1L,
-            title = "수정된 제목",
-            content = "수정된 내용"
-        )
+        val articleId = 1L
+        val title = "수정된 제목"
+        val content = "수정된 내용"
 
         // When
-        val updatedArticle = updateArticleFacade.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(articleId, title, content)
 
         // Then
         val savedArticle = fakeRepository.findById(1L)
@@ -99,14 +92,12 @@ class UpdateArticleFacadeTest : StringSpec({
 
     "존재하지 않는 Article을 업데이트하려고 하면 NullArticle이 반환되어야 한다" {
         // Given
-        val updateCommand = UpdateArticleCommand(
-            articleId = 999L,
-            title = "수정된 제목",
-            content = "수정된 내용"
-        )
+        val articleId = 999L
+        val title = "수정된 제목"
+        val content = "수정된 내용"
 
         // When
-        val result = updateArticleFacade.update(updateCommand)
+        val result = updateArticleFacade.update(articleId, title, content)
 
         // Then
         result.isNull() shouldBe true
@@ -124,14 +115,12 @@ class UpdateArticleFacadeTest : StringSpec({
         )
         fakeRepository.save(existingArticle)
 
-        val updateCommand = UpdateArticleCommand(
-            articleId = 1L,
-            title = "",
-            content = ""
-        )
+        val articleId = 1L
+        val title = ""
+        val content = ""
 
         // When
-        val updatedArticle = updateArticleFacade.update(updateCommand)
+        val updatedArticle = updateArticleFacade.update(articleId, title, content)
 
         // Then
         updatedArticle.title shouldBe ""
@@ -157,14 +146,12 @@ class UpdateArticleFacadeTest : StringSpec({
         fakeRepository.save(article1)
         fakeRepository.save(article2)
 
-        val updateCommand = UpdateArticleCommand(
-            articleId = 1L,
-            title = "수정된 첫 번째 제목",
-            content = "수정된 첫 번째 내용"
-        )
+        val articleId = 1L
+        val title = "수정된 첫 번째 제목"
+        val content = "수정된 첫 번째 내용"
 
         // When
-        updateArticleFacade.update(updateCommand)
+        updateArticleFacade.update(articleId, title, content)
 
         // Then
         val updatedArticle1 = fakeRepository.findById(1L)

@@ -63,10 +63,9 @@ class UpdateArticleControllerTest : StringSpec({
         controller.updateArticle(articleId, request)
 
         // Then
-        fakeUpdateUseCase.lastCommand shouldNotBe null
-        fakeUpdateUseCase.lastCommand?.articleId shouldBe articleId
-        fakeUpdateUseCase.lastCommand?.title shouldBe request.title
-        fakeUpdateUseCase.lastCommand?.content shouldBe request.content
+        fakeUpdateUseCase.lastArticleId shouldBe articleId
+        fakeUpdateUseCase.lastTitle shouldBe request.title
+        fakeUpdateUseCase.lastContent shouldBe request.content
     }
 
     "PUT /api/v1/articles/{articleId} - 수정된 Article이 올바른 Response로 변환되어야 한다" {

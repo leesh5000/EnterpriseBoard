@@ -1,23 +1,22 @@
 package me.helloc.enterpriseboard.application.facade
 
-import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 @Transactional
 class UpdateArticleFacade(
     private val articleRepository: ArticleRepository
 ) : UpdateArticleUseCase {
 
-    override fun update(command: UpdateArticleCommand): Article {
-        val article = articleRepository.findById(command.articleId)
+    override fun update(articleId: Long, title: String, content: String): Article {
+        val article = articleRepository.findById(articleId)
         val updatedArticle = article.update(
-            title = command.title,
-            content = command.content
+            title = title,
+            content = content
         )
 
         return articleRepository.save(updatedArticle)
