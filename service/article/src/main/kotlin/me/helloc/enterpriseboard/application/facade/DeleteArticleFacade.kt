@@ -12,9 +12,6 @@ class DeleteArticleFacade(
 ) : DeleteArticleUseCase {
 
     override fun delete(articleId: Long) {
-        if (!articleRepository.existsById(articleId)) {
-            throw NoSuchElementException("Article not found with id: $articleId")
-        }
         articleRepository.deleteById(articleId)
     }
 }

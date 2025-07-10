@@ -15,13 +15,11 @@ class UpdateArticleFacade(
 
     override fun update(command: UpdateArticleCommand): Article {
         val article = articleRepository.findById(command.articleId)
-            ?: throw NoSuchElementException("Article not found with id: ${command.articleId}")
-        
         val updatedArticle = article.update(
             title = command.title,
             content = command.content
         )
-        
+
         return articleRepository.save(updatedArticle)
     }
 }

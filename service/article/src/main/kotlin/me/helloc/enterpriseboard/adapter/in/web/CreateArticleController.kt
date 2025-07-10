@@ -1,7 +1,7 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
-import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
+import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleCommand
 import me.helloc.enterpriseboard.application.port.`in`.CreateArticleUseCase
 import org.springframework.http.HttpStatus

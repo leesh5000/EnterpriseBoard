@@ -24,10 +24,10 @@ class ArticleJpaAdapter(
         return articleJpaRepository.save(entity).toDomain()
     }
 
-    override fun findById(articleId: Long): Article? {
+    override fun findById(articleId: Long): Article {
         return articleJpaRepository.findById(articleId)
             .map { it.toDomain() }
-            .orElse(null)
+            .orElse(Article.empty())
     }
 
     override fun findByBoardId(boardId: Long): List<Article> {

@@ -1,7 +1,7 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
-import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
+import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import org.springframework.http.ResponseEntity

@@ -33,14 +33,12 @@ class ArticleJpaEntity(
     }
 
     fun toDomain(): Article {
-        return Article(
+        return Article.create(
             articleId = this.articleId,
             title = this.title,
             content = this.content,
             boardId = this.boardId,
             writerId = this.writerId,
-            createdAt = this.createdAt,
-            modifiedAt = this.modifiedAt
         )
     }
 

@@ -16,7 +16,7 @@ class GetArticleFacade(
     private val articleRepository: ArticleRepository
 ) : GetArticleUseCase {
 
-    override fun getById(articleId: Long): Article? {
+    override fun getById(articleId: Long): Article {
         return articleRepository.findById(articleId)
     }
 
