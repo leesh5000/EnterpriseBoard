@@ -2,6 +2,7 @@ package me.helloc.enterpriseboard.adapter.out.persistence
 
 import jakarta.persistence.*
 import me.helloc.enterpriseboard.domain.model.Comment
+import me.helloc.enterpriseboard.domain.model.RealComment
 import java.time.LocalDateTime
 
 @Entity
@@ -47,7 +48,7 @@ class CommentJpaEntity(
     }
 
     fun toDomainModel(): Comment {
-        return Comment(
+        return RealComment(
             commentId = commentId,
             content = content,
             parentCommentId = parentCommentId,
