@@ -15,10 +15,12 @@ class UpdateCommentFacade(
 
     override fun update(command: UpdateCommentCommand): Comment {
         val comment = commentRepository.findById(command.commentId)
-            ?: throw NoSuchElementException("Comment not found with id: ${command.commentId}")
+        
+        if (comment.isNull()) {
+            return Comment.empty()
+        }
         
         val updatedComment = comment.update(command.content)
-        
         return commentRepository.save(updatedComment)
     }
 }

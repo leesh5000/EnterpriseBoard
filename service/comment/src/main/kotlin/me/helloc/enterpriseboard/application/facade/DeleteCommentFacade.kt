@@ -13,7 +13,10 @@ class DeleteCommentFacade(
 
     override fun delete(commentId: Long) {
         val comment = commentRepository.findById(commentId)
-            ?: throw NoSuchElementException("Comment not found with id: $commentId")
+        
+        if (comment.isNull()) {
+            return
+        }
         
         val deletedComment = comment.delete()
         commentRepository.save(deletedComment)
