@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import me.helloc.enterpriseboard.adapter.`in`.web.ErrorResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
@@ -182,9 +183,9 @@ class ArticleIntegrationTest {
 
         assert(deleteResponse.statusCode == HttpStatus.NO_CONTENT)
 
-        val getResponse: ResponseEntity<ArticleResponse> = restTemplate.getForEntity(
+        val getResponse: ResponseEntity<ErrorResponse> = restTemplate.getForEntity(
             "http://localhost:$port/api/v1/articles/$articleId",
-            ArticleResponse::class.java
+            ErrorResponse::class.java
         )
 
         assert(getResponse.statusCode == HttpStatus.NOT_FOUND)
@@ -255,9 +256,9 @@ class ArticleIntegrationTest {
         assert(deleteResponse.statusCode == HttpStatus.NO_CONTENT)
 
         // 삭제 후 조회 테스트
-        val getAfterDeleteResponse: ResponseEntity<ArticleResponse> = restTemplate.getForEntity(
+        val getAfterDeleteResponse: ResponseEntity<ErrorResponse> = restTemplate.getForEntity(
             "http://localhost:$port/api/v1/articles/$articleId",
-            ArticleResponse::class.java
+            ErrorResponse::class.java
         )
 
         assert(getAfterDeleteResponse.statusCode == HttpStatus.NOT_FOUND)

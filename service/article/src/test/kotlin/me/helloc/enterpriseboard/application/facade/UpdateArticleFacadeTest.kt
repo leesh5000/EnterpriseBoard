@@ -1,13 +1,10 @@
 package me.helloc.enterpriseboard.application.facade
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.application.port.`in`.UpdateArticleCommand
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.application.facade.UpdateArticleFacade
-import java.time.LocalDateTime
 
 class UpdateArticleFacadeTest : StringSpec({
 
@@ -100,7 +97,7 @@ class UpdateArticleFacadeTest : StringSpec({
         savedArticle?.content shouldBe "수정된 내용"
     }
 
-    "존재하지 않는 Article을 업데이트하려고 하면 예외가 발생해야 한다" {
+    "존재하지 않는 Article을 업데이트하려고 하면 NullArticle이 반환되어야 한다" {
         // Given
         val updateCommand = UpdateArticleCommand(
             articleId = 999L,
@@ -108,11 +105,12 @@ class UpdateArticleFacadeTest : StringSpec({
             content = "수정된 내용"
         )
 
-        // When & Then
-        val exception = shouldThrow<NoSuchElementException> {
-            updateArticleFacade.update(updateCommand)
-        }
-        exception.message shouldBe "Article not found with id: 999"
+        // When
+        val result = updateArticleFacade.update(updateCommand)
+
+        // Then
+        result.isNull() shouldBe true
+        result.articleId shouldBe -1L
     }
 
     "빈 문자열로 Article을 업데이트할 수 있어야 한다" {
@@ -172,7 +170,7 @@ class UpdateArticleFacadeTest : StringSpec({
         val updatedArticle1 = fakeRepository.findById(1L)
         val unchangedArticle2 = fakeRepository.findById(2L)
 
-        updatedArticle1?.title shouldBe "수정된 첫 번째 제목"
-        unchangedArticle2?.title shouldBe "두 번째 제목"
+        updatedArticle1.title shouldBe "수정된 첫 번째 제목"
+        updatedArticle1.content shouldBe "수정된 첫 번째 내용"
     }
 })

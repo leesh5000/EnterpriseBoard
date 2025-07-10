@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CreateArticleRequest
-import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.domain.model.RealArticle
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -28,7 +28,7 @@ class CreateArticleControllerTest : StringSpec({
             boardId = 100L,
             writerId = 200L
         )
-        val expectedArticle = Article(
+        val expectedArticle = RealArticle(
             articleId = 123L,
             title = request.title,
             content = request.content,
@@ -81,7 +81,7 @@ class CreateArticleControllerTest : StringSpec({
             writerId = 200L
         )
         val createdTime = LocalDateTime.now()
-        val expectedArticle = Article(
+        val expectedArticle = RealArticle(
             articleId = 456L,
             title = request.title,
             content = request.content,

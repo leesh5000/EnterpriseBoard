@@ -2,6 +2,7 @@ package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.domain.model.NullArticle
 
 class FakeArticleRepository : ArticleRepository {
     private val storage = mutableMapOf<Long, Article>()
@@ -11,8 +12,8 @@ class FakeArticleRepository : ArticleRepository {
         return article
     }
 
-    override fun findById(articleId: Long): Article? {
-        return storage[articleId]
+    override fun findById(articleId: Long): Article {
+        return storage[articleId] ?: NullArticle
     }
 
     override fun findByBoardId(boardId: Long): List<Article> {

@@ -1,10 +1,15 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
+import me.helloc.enterpriseboard.domain.exception.BusinessException
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.domain.model.NullArticle
+import me.helloc.enterpriseboard.domain.model.RealArticle
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -23,7 +28,7 @@ class GetArticleControllerTest : StringSpec({
     "GET /api/v1/articles/{articleId} - 존재하는 Article 조회 시 200 OK와 함께 응답해야 한다" {
         // Given
         val articleId = 1L
-        val article = Article(
+        val article = RealArticle(
             articleId = articleId,
             title = "조회된 제목",
             content = "조회된 내용",
@@ -47,24 +52,25 @@ class GetArticleControllerTest : StringSpec({
         response.body?.writerId shouldBe article.writerId
     }
 
-    "GET /api/v1/articles/{articleId} - 존재하지 않는 Article 조회 시 404 Not Found를 반환해야 한다" {
+    "GET /api/v1/articles/{articleId} - 존재하지 않는 Article 조회 시 BusinessException을 던져야 한다" {
         // Given
         val nonExistentId = 999L
-        // fakeGetUseCase는 비어있음
+        // fakeGetUseCase는 NullArticle을 반환하도록 설정
 
-        // When
-        val response = controller.getArticle(nonExistentId)
-
-        // Then
-        response.statusCode shouldBe HttpStatus.NOT_FOUND
-        response.body shouldBe null
+        // When & Then
+        val exception = shouldThrow<BusinessException> {
+            controller.getArticle(nonExistentId)
+        }
+        
+        exception.errorCode shouldBe ErrorCode.NOT_FOUND_ARTICLE
+        exception.message shouldBe "ID 999에 해당하는 게시글이 존재하지 않습니다."
     }
 
     "GET /api/v1/articles/{articleId} - Article이 올바른 Response로 변환되어야 한다" {
         // Given
         val articleId = 789L
         val now = LocalDateTime.now()
-        val article = Article(
+        val article = RealArticle(
             articleId = articleId,
             title = "도메인 제목",
             content = "도메인 내용",

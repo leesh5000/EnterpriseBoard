@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.UpdateArticleRequest
-import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.domain.model.RealArticle
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -27,7 +27,7 @@ class UpdateArticleControllerTest : StringSpec({
             title = "수정된 제목",
             content = "수정된 내용"
         )
-        val updatedArticle = Article(
+        val updatedArticle = RealArticle(
             articleId = articleId,
             title = request.title,
             content = request.content,
@@ -77,7 +77,7 @@ class UpdateArticleControllerTest : StringSpec({
             content = "변환 테스트 내용"
         )
         val updatedTime = LocalDateTime.now()
-        val updatedArticle = Article(
+        val updatedArticle = RealArticle(
             articleId = articleId,
             title = request.title,
             content = request.content,
