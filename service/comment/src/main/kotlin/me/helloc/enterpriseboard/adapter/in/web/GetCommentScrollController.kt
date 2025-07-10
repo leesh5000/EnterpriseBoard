@@ -1,7 +1,6 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CommentResponse
-import me.helloc.enterpriseboard.application.port.`in`.GetCommentScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetCommentUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,13 +21,7 @@ class GetCommentScrollController(
         @RequestParam(defaultValue = "0") lastCommentId: Long
     ): ResponseEntity<List<CommentResponse>> {
 
-        val query = GetCommentScrollQuery(
-            articleId = articleId,
-            pageSize = pageSize,
-            lastCommentId = lastCommentId
-        )
-
-        val comments = useCase.getScroll(query)
+        val comments = useCase.getScroll(articleId, pageSize, lastCommentId)
         val responses = comments.map { CommentResponse.from(it) }
         return ResponseEntity.ok(responses)
     }

@@ -1,8 +1,10 @@
 package me.helloc.enterpriseboard.adapter.`in`.web.dto
 
+import me.helloc.enterpriseboard.domain.model.Comment
+
 data class CreateCommentRequest(
     val content: String,
-    val parentCommentId: Long = 0L,
+    val parentCommentId: Long = Comment.nullComment().commentId,
     val articleId: Long,
     val writerId: Long
 )

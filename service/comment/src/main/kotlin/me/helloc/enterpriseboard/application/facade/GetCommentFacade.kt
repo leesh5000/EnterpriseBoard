@@ -1,8 +1,6 @@
 package me.helloc.enterpriseboard.application.facade
 
-import me.helloc.enterpriseboard.application.port.`in`.GetCommentPageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetCommentPageResult
-import me.helloc.enterpriseboard.application.port.`in`.GetCommentScrollQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetCommentUseCase
 import me.helloc.enterpriseboard.application.port.out.CommentRepository
 import me.helloc.enterpriseboard.domain.model.Comment
@@ -28,42 +26,42 @@ class GetCommentFacade(
         return commentRepository.findByWriterId(writerId)
     }
 
-    override fun getPage(query: GetCommentPageQuery): GetCommentPageResult {
-        val offset = (query.page - 1) * query.pageSize
+    override fun getPage(articleId: Long, page: Long, pageSize: Long, movablePageCount: Long): GetCommentPageResult {
+        val offset = (page - 1) * pageSize
         val limit = PageLimitCalculator.calculate(
-            page = query.page,
-            pageSize = query.pageSize,
-            movablePageCount = query.movablePageCount
+            page = page,
+            pageSize = pageSize,
+            movablePageCount = movablePageCount
         )
 
         val comments = commentRepository.findAll(
-            articleId = query.articleId,
+            articleId = articleId,
             offset = offset,
-            limit = query.pageSize
+            limit = pageSize
         )
 
-        val count = commentRepository.countByArticleId(
-            articleId = query.articleId,
+        val limitedTotalCount = commentRepository.countByArticleId(
+            articleId = articleId,
             limit = limit
         )
 
         return GetCommentPageResult(
             comments = comments,
-            count = count
+            limitedTotalCount = limitedTotalCount
         )
     }
 
-    override fun getScroll(query: GetCommentScrollQuery): List<Comment> {
-        val comments = if (query.lastCommentId == 0L) {
+    override fun getScroll(articleId: Long, pageSize: Long, lastCommentId: Long): List<Comment> {
+        val comments = if (lastCommentId == 0L) {
             commentRepository.findAllInfiniteScroll(
-                articleId = query.articleId,
-                limit = query.pageSize
+                articleId = articleId,
+                limit = pageSize
             )
         } else {
             commentRepository.findAllInfiniteScroll(
-                articleId = query.articleId,
-                limit = query.pageSize,
-                lastCommentId = query.lastCommentId
+                articleId = articleId,
+                limit = pageSize,
+                lastCommentId = lastCommentId
             )
         }
 

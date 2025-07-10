@@ -1,6 +1,5 @@
 package me.helloc.enterpriseboard.application.facade
 
-import me.helloc.enterpriseboard.application.port.`in`.UpdateCommentCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateCommentUseCase
 import me.helloc.enterpriseboard.application.port.out.CommentRepository
 import me.helloc.enterpriseboard.domain.model.Comment
@@ -13,14 +12,14 @@ class UpdateCommentFacade(
     private val commentRepository: CommentRepository
 ) : UpdateCommentUseCase {
 
-    override fun update(command: UpdateCommentCommand): Comment {
-        val comment = commentRepository.findById(command.commentId)
-        
+    override fun update(commentId: Long, content: String): Comment {
+        val comment = commentRepository.findById(commentId)
+
         if (comment.isNull()) {
-            return Comment.empty()
+            return Comment.nullComment()
         }
-        
-        val updatedComment = comment.update(command.content)
+
+        val updatedComment = comment.update(content)
         return commentRepository.save(updatedComment)
     }
 }

@@ -2,7 +2,6 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.UpdateCommentRequest
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CommentResponse
-import me.helloc.enterpriseboard.application.port.`in`.UpdateCommentCommand
 import me.helloc.enterpriseboard.application.port.`in`.UpdateCommentUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,12 +21,7 @@ class UpdateCommentController(
         @PathVariable commentId: Long,
         @RequestBody request: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
-        val command = UpdateCommentCommand(
-            commentId = commentId,
-            content = request.content
-        )
-
-        val comment = useCase.update(command)
+        val comment = useCase.update(commentId, request.content)
         return ResponseEntity.ok(CommentResponse.from(comment))
     }
 }

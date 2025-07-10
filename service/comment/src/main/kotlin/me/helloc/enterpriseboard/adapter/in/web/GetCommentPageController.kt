@@ -2,7 +2,6 @@ package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetCommentPageResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.CommentResponse
-import me.helloc.enterpriseboard.application.port.`in`.GetCommentPageQuery
 import me.helloc.enterpriseboard.application.port.`in`.GetCommentUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,18 +22,11 @@ class GetCommentPageController(
         @RequestParam pageSize: Long,
         @RequestParam(defaultValue = "10") movablePageCount: Long
     ): ResponseEntity<GetCommentPageResponse> {
-        val query = GetCommentPageQuery(
-            articleId = articleId,
-            page = page,
-            pageSize = pageSize,
-            movablePageCount = movablePageCount
-        )
-
-        val commentPage = useCase.getPage(query)
+        val commentPage = useCase.getPage(articleId, page, pageSize, movablePageCount)
 
         val response = GetCommentPageResponse.of(
             comments = commentPage.comments.map { CommentResponse.from(it) },
-            totalCount = commentPage.count
+            totalCount = commentPage.limitedTotalCount
         )
 
         return ResponseEntity.ok(response)
