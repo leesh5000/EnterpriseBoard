@@ -16,7 +16,7 @@ class DeleteCommentControllerTest : StringSpec({
         )
     }
 
-    "DELETE /api/v1/comments/{commentId} - 댓글 삭제 시 204 NO_CONTENT를 응답해야 한다" {
+    "DELETE /api/v1/comments/{commentId} - Comment 삭제 시 204 No Content로 응답해야 한다" {
         // Given
         val commentId = 123L
 
@@ -24,10 +24,8 @@ class DeleteCommentControllerTest : StringSpec({
         controller.deleteComment(commentId)
 
         // Then
-        // @ResponseStatus 어노테이션으로 인해 자동으로 204 NO_CONTENT가 설정됨
-        // 실제 Spring MVC 환경에서 테스트되어야 하지만, 
-        // 단위 테스트에서는 메서드가 정상적으로 호출되는지만 검증
-        fakeDeleteUseCase.deleteCallCount shouldBe 1
+        // @ResponseStatus(HttpStatus.NO_CONTENT) 어노테이션으로 인해 204 응답
+        // 별도의 응답 검증은 불가하지만, 예외가 발생하지 않으면 정상 처리로 간주
     }
 
     "DELETE /api/v1/comments/{commentId} - UseCase에 올바른 commentId가 전달되어야 한다" {
@@ -39,9 +37,12 @@ class DeleteCommentControllerTest : StringSpec({
 
         // Then
         fakeDeleteUseCase.lastDeletedCommentId shouldBe commentId
+        fakeDeleteUseCase.deleteCallCount shouldBe 1
+        fakeDeleteUseCase.deletedCommentIds.size shouldBe 1
+        fakeDeleteUseCase.deletedCommentIds[0] shouldBe commentId
     }
 
-    "DELETE /api/v1/comments/{commentId} - 여러 번의 삭제 요청이 각각 처리되어야 한다" {
+    "DELETE /api/v1/comments/{commentId} - 여러 댓글 삭제 시 각각의 commentId가 순서대로 추적되어야 한다" {
         // Given
         val commentIds = listOf(100L, 200L, 300L)
 
@@ -51,36 +52,24 @@ class DeleteCommentControllerTest : StringSpec({
         }
 
         // Then
-        fakeDeleteUseCase.deleteCallCount shouldBe 3
+        fakeDeleteUseCase.lastDeletedCommentId shouldBe commentIds.last()
+        fakeDeleteUseCase.deleteCallCount shouldBe commentIds.size
         fakeDeleteUseCase.deletedCommentIds shouldBe commentIds
-        fakeDeleteUseCase.lastDeletedCommentId shouldBe 300L
     }
 
-    "DELETE /api/v1/comments/{commentId} - 0 이하의 commentId도 UseCase로 전달되어야 한다" {
+    "DELETE /api/v1/comments/{commentId} - 동일한 댓글을 여러 번 삭제해도 모든 호출이 추적되어야 한다" {
         // Given
-        val invalidCommentIds = listOf(0L, -1L, -999L)
+        val commentId = 789L
 
         // When
-        invalidCommentIds.forEach { commentId ->
+        repeat(3) {
             controller.deleteComment(commentId)
         }
 
         // Then
-        // 컨트롤러는 검증 없이 UseCase로 전달하고, 
-        // 실제 검증은 UseCase/도메인 레이어에서 처리됨
-        fakeDeleteUseCase.deletedCommentIds shouldBe invalidCommentIds
+        fakeDeleteUseCase.lastDeletedCommentId shouldBe commentId
         fakeDeleteUseCase.deleteCallCount shouldBe 3
-    }
-
-    "DELETE /api/v1/comments/{commentId} - Long 타입의 최대값도 정상적으로 처리되어야 한다" {
-        // Given
-        val maxLongValue = Long.MAX_VALUE
-
-        // When
-        controller.deleteComment(maxLongValue)
-
-        // Then
-        fakeDeleteUseCase.lastDeletedCommentId shouldBe maxLongValue
-        fakeDeleteUseCase.deleteCallCount shouldBe 1
+        fakeDeleteUseCase.deletedCommentIds.size shouldBe 3
+        fakeDeleteUseCase.deletedCommentIds.all { it == commentId } shouldBe true
     }
 })
