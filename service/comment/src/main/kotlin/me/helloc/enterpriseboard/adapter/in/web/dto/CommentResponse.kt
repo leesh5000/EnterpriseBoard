@@ -10,8 +10,7 @@ data class CommentResponse(
     val articleId: Long,
     val writerId: Long,
     val deleted: Boolean,
-    val createdAt: LocalDateTime,
-    val modifiedAt: LocalDateTime
+    val createdAt: LocalDateTime
 ) {
     companion object {
         fun from(comment: Comment): CommentResponse {
@@ -22,8 +21,7 @@ data class CommentResponse(
                 articleId = comment.articleId,
                 writerId = comment.writerId,
                 deleted = comment.deleted,
-                createdAt = comment.createdAt,
-                modifiedAt = comment.modifiedAt
+                createdAt = comment.createdAt
             )
         }
     }

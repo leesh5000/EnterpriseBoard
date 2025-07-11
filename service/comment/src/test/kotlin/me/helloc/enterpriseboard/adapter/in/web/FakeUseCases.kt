@@ -26,7 +26,6 @@ class FakeCreateCommentUseCase : CreateCommentUseCase {
         articleId = 100L,
         writerId = 200L,
         deleted = false,
-        createdAt = LocalDateTime.now(),
-        modifiedAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now()
     )
 }

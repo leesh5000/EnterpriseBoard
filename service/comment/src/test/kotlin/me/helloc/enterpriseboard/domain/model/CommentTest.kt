@@ -29,30 +29,8 @@ class CommentTest : StringSpec({
         comment.writerId shouldBe writerId
         comment.deleted shouldBe false
         comment.createdAt shouldNotBe null
-        comment.modifiedAt shouldNotBe null
     }
 
-    "Comment 수정 시 내용과 수정시간이 변경되어야 한다" {
-        // Given
-        val comment = Comment.create(
-            commentId = 1L,
-            content = "원본 내용",
-            articleId = 100L,
-            writerId = 200L
-        )
-        val newContent = "수정된 내용"
-
-        // When
-        val updatedComment = comment.update(newContent)
-
-        // Then
-        updatedComment.content shouldBe newContent
-        updatedComment.commentId shouldBe comment.commentId
-        updatedComment.articleId shouldBe comment.articleId
-        updatedComment.writerId shouldBe comment.writerId
-        updatedComment.deleted shouldBe comment.deleted
-        updatedComment.createdAt shouldBe comment.createdAt
-    }
 
     "Comment 삭제 시 deleted 플래그가 true로 변경되어야 한다" {
         // Given

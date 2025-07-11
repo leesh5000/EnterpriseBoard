@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.out.CommentRepository
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Comment
 
 class FakeCommentRepository : CommentRepository {
@@ -11,17 +12,15 @@ class FakeCommentRepository : CommentRepository {
         return comment
     }
 
-    override fun findById(commentId: Long): Comment? {
-        return storage[commentId]
+    override fun findById(commentId: Long): java.util.Optional<Comment> {
+        return java.util.Optional.ofNullable(storage[commentId])
     }
 
-    override fun findByArticleId(articleId: Long): List<Comment> {
-        return storage.values.filter { it.articleId == articleId }
+    override fun getById(commentId: Long): Comment {
+        return storage[commentId] ?:
+            throw ErrorCode.COMMENT_NOT_FOUND.toException("commentId" to commentId)
     }
 
-    override fun findByWriterId(writerId: Long): List<Comment> {
-        return storage.values.filter { it.writerId == writerId }
-    }
 
     override fun deleteById(commentId: Long) {
         storage.remove(commentId)
@@ -31,45 +30,13 @@ class FakeCommentRepository : CommentRepository {
         return storage.containsKey(commentId)
     }
 
-    override fun findAll(
-        articleId: Long,
-        offset: Long,
-        limit: Long,
-    ): List<Comment> {
-        return storage.values
-            .filter { it.articleId == articleId }
-            .sortedByDescending { it.commentId }
-            .drop(offset.toInt())
-            .take(limit.toInt())
-    }
 
-    override fun countByArticleId(articleId: Long, limit: Long): Long {
+    override fun countBy(articleId: Long, parentCommentId: Long, limit: Long): Long {
         return storage.values
-            .filter { it.articleId == articleId }
+            .filter { it.articleId == articleId && it.parentCommentId == parentCommentId }
             .take(limit.toInt())
             .count()
             .toLong()
-    }
-
-    override fun findAllInfiniteScroll(
-        articleId: Long,
-        limit: Long,
-    ): List<Comment> {
-        return storage.values
-            .filter { it.articleId == articleId }
-            .sortedByDescending { it.commentId }
-            .take(limit.toInt())
-    }
-
-    override fun findAllInfiniteScroll(
-        articleId: Long,
-        limit: Long,
-        lastCommentId: Long,
-    ): List<Comment> {
-        return storage.values
-            .filter { it.articleId == articleId && it.commentId < lastCommentId }
-            .sortedByDescending { it.commentId }
-            .take(limit.toInt())
     }
 
     // 테스트를 위한 헬퍼 메서드

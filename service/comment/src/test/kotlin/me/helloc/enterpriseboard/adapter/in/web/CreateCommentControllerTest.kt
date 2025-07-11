@@ -35,8 +35,7 @@ class CreateCommentControllerTest : StringSpec({
             articleId = request.articleId,
             writerId = request.writerId,
             deleted = false,
-            createdAt = LocalDateTime.now(),
-            modifiedAt = LocalDateTime.now()
+            createdAt = LocalDateTime.now()
         )
         fakeCreateUseCase.commentToReturn = expectedComment
 
@@ -89,8 +88,7 @@ class CreateCommentControllerTest : StringSpec({
             articleId = request.articleId,
             writerId = request.writerId,
             deleted = false,
-            createdAt = createdTime,
-            modifiedAt = createdTime
+            createdAt = createdTime
         )
         fakeCreateUseCase.commentToReturn = expectedComment
 
@@ -106,7 +104,6 @@ class CreateCommentControllerTest : StringSpec({
         responseBody.writerId shouldBe expectedComment.writerId
         responseBody.deleted shouldBe expectedComment.deleted
         responseBody.createdAt shouldBe expectedComment.createdAt
-        responseBody.modifiedAt shouldBe expectedComment.modifiedAt
     }
 
     "POST /api/v1/comments - 대댓글 생성 시 parentCommentId가 올바르게 처리되어야 한다" {
@@ -125,8 +122,7 @@ class CreateCommentControllerTest : StringSpec({
             articleId = request.articleId,
             writerId = request.writerId,
             deleted = false,
-            createdAt = LocalDateTime.now(),
-            modifiedAt = LocalDateTime.now()
+            createdAt = LocalDateTime.now()
         )
         fakeCreateUseCase.commentToReturn = expectedComment
 
