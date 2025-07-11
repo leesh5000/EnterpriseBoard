@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.application.port.`in`.CreateCommentUseCase
+import me.helloc.enterpriseboard.application.port.`in`.DeleteCommentUseCase
 import me.helloc.enterpriseboard.domain.model.Comment
 import java.time.LocalDateTime
 
@@ -28,4 +29,16 @@ class FakeCreateCommentUseCase : CreateCommentUseCase {
         deleted = false,
         createdAt = LocalDateTime.now()
     )
+}
+
+class FakeDeleteCommentUseCase : DeleteCommentUseCase {
+    var lastDeletedCommentId: Long? = null
+    val deletedCommentIds = mutableListOf<Long>()
+    var deleteCallCount = 0
+
+    override fun delete(commentId: Long) {
+        lastDeletedCommentId = commentId
+        deletedCommentIds.add(commentId)
+        deleteCallCount++
+    }
 }
