@@ -26,10 +26,7 @@ class CommentJpaEntity(
     val deleted: Boolean,
     
     @Column(nullable = false)
-    val createdAt: LocalDateTime,
-    
-    @Column(nullable = false)
-    val modifiedAt: LocalDateTime
+    val createdAt: LocalDateTime
 ) {
     companion object {
         fun from(comment: Comment): CommentJpaEntity {
@@ -40,8 +37,7 @@ class CommentJpaEntity(
                 articleId = comment.articleId,
                 writerId = comment.writerId,
                 deleted = comment.deleted,
-                createdAt = comment.createdAt,
-                modifiedAt = comment.modifiedAt
+                createdAt = comment.createdAt
             )
         }
     }
@@ -54,8 +50,7 @@ class CommentJpaEntity(
             articleId = articleId,
             writerId = writerId,
             deleted = deleted,
-            createdAt = createdAt,
-            modifiedAt = modifiedAt
+            createdAt = createdAt
         )
     }
 }

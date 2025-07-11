@@ -10,20 +10,11 @@ data class Comment(
     val writerId: Long,
     val deleted: Boolean,
     val createdAt: LocalDateTime,
-    val modifiedAt: LocalDateTime,
 ) {
-
-    fun update(content: String): Comment {
-        return this.copy(
-            content = content,
-            modifiedAt = LocalDateTime.now()
-        )
-    }
 
     fun delete(): Comment {
         return this.copy(
-            deleted = true,
-            modifiedAt = LocalDateTime.now()
+            deleted = true
         )
     }
 
@@ -49,8 +40,7 @@ data class Comment(
                 articleId = articleId,
                 writerId = writerId,
                 deleted = false,
-                createdAt = now,
-                modifiedAt = now
+                createdAt = now
             )
         }
     }

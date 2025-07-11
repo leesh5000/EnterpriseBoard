@@ -1,11 +1,14 @@
 package me.helloc.enterpriseboard.application.facade
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import me.helloc.enterpriseboard.domain.exception.BusinessException
+import me.helloc.enterpriseboard.domain.model.Article
 
 
 import java.time.LocalDateTime
@@ -41,15 +44,15 @@ class GetArticleFacadeTest : StringSpec({
         foundArticle shouldBe article
     }
 
-    "존재하지 않는 ID로 조회하면 null을 반환해야 한다" {
+    "존재하지 않는 ID로 조회하면 예외를 발생해야 한다." {
         // Given
         // Repository가 비어있음
 
-        // When
-        val foundArticle = getArticleFacade.getById(999L)
+        // When & Then
+        shouldThrow<BusinessException> {
+            fakeRepository.getById(999L)
+        }
 
-        // Then
-        foundArticle shouldBe NullArticle
     }
 
     "Board ID로 Article 목록을 조회할 수 있어야 한다" {
@@ -174,12 +177,14 @@ class GetArticleFacadeTest : StringSpec({
         articles.shouldBeEmpty()
     }
 
-    "Repository가 비어있을 때 모든 조회는 null 또는 빈 리스트를 반환해야 한다" {
+    "Repository가 비어있을 때 모든 조회는 예외를 발생하거나 또는 빈 리스트를 반환해야 한다" {
         // Given
         // Repository가 비어있음
 
         // When & Then
-        getArticleFacade.getById(1L) shouldBe NullArticle
+        shouldThrow<BusinessException> {
+            fakeRepository.getById(1L)
+        }
         getArticleFacade.getByBoardId(100L).shouldBeEmpty()
         getArticleFacade.getByWriterId(200L).shouldBeEmpty()
     }

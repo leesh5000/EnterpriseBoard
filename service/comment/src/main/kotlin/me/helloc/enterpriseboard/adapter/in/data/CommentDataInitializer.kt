@@ -93,8 +93,7 @@ class CommentDataInitializer {
                     articleId = ARTICLE_ID,
                     writerId = generateWriterId(recordIndex),
                     deleted = false,
-                    createdAt = LocalDateTime.now(),
-                    modifiedAt = LocalDateTime.now()
+                    createdAt = LocalDateTime.now()
                 )
                 entityManager.persist(jpaEntity)
 

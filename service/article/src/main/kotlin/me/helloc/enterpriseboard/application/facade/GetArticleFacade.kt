@@ -3,7 +3,6 @@ package me.helloc.enterpriseboard.application.facade
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageResult
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
-import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
 import me.helloc.enterpriseboard.domain.service.PageLimitCalculator
 import org.springframework.stereotype.Component
@@ -16,15 +15,15 @@ class GetArticleFacade(
 ) : GetArticleUseCase {
 
     override fun getById(articleId: Long): Article {
-        return articleRepository.findById(articleId)
+        return articleRepository.getById(articleId)
     }
 
     override fun getByBoardId(boardId: Long): List<Article> {
-        return articleRepository.findByBoardId(boardId)
+        return articleRepository.getByBoardId(boardId)
     }
 
     override fun getByWriterId(writerId: Long): List<Article> {
-        return articleRepository.findByWriterId(writerId)
+        return articleRepository.getByWriterId(writerId)
     }
 
     override fun getPage(boardId: Long, page: Long, pageSize: Long, movablePageCount: Long): GetArticlePageResult {

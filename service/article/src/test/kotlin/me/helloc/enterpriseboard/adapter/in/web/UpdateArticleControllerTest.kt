@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.UpdateArticleRequest
+import me.helloc.enterpriseboard.domain.model.Article
 
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime

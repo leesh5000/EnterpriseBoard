@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import me.helloc.enterpriseboard.domain.exception.BusinessException
 import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Comment
-import me.helloc.enterpriseboard.domain.service.CommentFactory
 
 class CommentFactoryTest : StringSpec({
 
@@ -87,7 +86,7 @@ class CommentFactoryTest : StringSpec({
             writerId = 1L
         ).delete()
 
-        // When & Then
+        // When & Thenz
         val exception = shouldThrow<BusinessException> {
             factory.createChildComment(
                 content = "자식 댓글",
@@ -152,8 +151,8 @@ class CommentFactoryTest : StringSpec({
         newChild.parentCommentId shouldBe 100L
 
         // 2depth 댓글로 3depth 생성 시 예외 발생
-        shouldThrow<BusinessException> { 
-            factory.createChildComment("새 자식", 1L, 2L, childComment) 
+        shouldThrow<BusinessException> {
+            factory.createChildComment("새 자식", 1L, 2L, childComment)
         }
     }
 

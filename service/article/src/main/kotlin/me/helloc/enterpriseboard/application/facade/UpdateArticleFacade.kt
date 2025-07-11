@@ -13,7 +13,7 @@ class UpdateArticleFacade(
 ) : UpdateArticleUseCase {
 
     override fun update(articleId: Long, title: String, content: String): Article {
-        val article = articleRepository.findById(articleId)
+        val article = articleRepository.getById(articleId)
         val updatedArticle = article.update(
             title = title,
             content = content

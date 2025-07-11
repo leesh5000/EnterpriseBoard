@@ -3,6 +3,7 @@ package me.helloc.enterpriseboard.application.facade
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import me.helloc.enterpriseboard.domain.exception.BusinessException
 import me.helloc.enterpriseboard.domain.model.Article
 
 
@@ -36,7 +37,9 @@ class DeleteArticleFacadeTest : StringSpec({
 
         // Then
         fakeRepository.existsById(1L) shouldBe false
-        fakeRepository.findById(1L) shouldBe NullArticle
+        shouldThrow<BusinessException> {
+            fakeRepository.getById(1L)
+        }
     }
 
     "여러 Article 중 특정 Article만 삭제되어야 한다" {
@@ -110,7 +113,7 @@ class DeleteArticleFacadeTest : StringSpec({
         fakeRepository.save(newArticle)
 
         // Then
-        val savedArticle = fakeRepository.findById(1L)
+        val savedArticle = fakeRepository.getById(1L)
         savedArticle shouldBe newArticle
         savedArticle?.title shouldBe "새로운 제목"
         savedArticle?.boardId shouldBe 101L

@@ -3,7 +3,6 @@ package me.helloc.enterpriseboard.application.facade
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import me.helloc.enterpriseboard.application.facade.CreateArticleFacade
 
 class CreateArticleFacadeTest : StringSpec({
 
@@ -58,7 +57,7 @@ class CreateArticleFacadeTest : StringSpec({
         val createdArticle = createArticleFacade.create(title, content, boardId, writerId)
 
         // Then
-        val savedArticle = fakeRepository.findById(createdArticle.articleId)
+        val savedArticle = fakeRepository.getById(createdArticle.articleId)
         savedArticle shouldNotBe null
         savedArticle shouldBe createdArticle
     }
@@ -89,7 +88,7 @@ class CreateArticleFacadeTest : StringSpec({
         // Then
         createdArticle.title shouldBe ""
         createdArticle.content shouldBe ""
-        val savedArticle = fakeRepository.findById(createdArticle.articleId)
+        val savedArticle = fakeRepository.getById(createdArticle.articleId)
         savedArticle shouldNotBe null
     }
 

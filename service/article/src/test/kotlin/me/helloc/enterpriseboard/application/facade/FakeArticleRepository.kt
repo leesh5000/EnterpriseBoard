@@ -13,17 +13,17 @@ class FakeArticleRepository : ArticleRepository {
         return article
     }
 
-    override fun findById(articleId: Long): Article {
+    override fun getById(articleId: Long): Article {
         return storage[articleId] ?: throw ErrorCode.NOT_FOUND_ARTICLE.toException(
             "articleId" to articleId
         )
     }
 
-    override fun findByBoardId(boardId: Long): List<Article> {
+    override fun getByBoardId(boardId: Long): List<Article> {
         return storage.values.filter { it.boardId == boardId }
     }
 
-    override fun findByWriterId(writerId: Long): List<Article> {
+    override fun getByWriterId(writerId: Long): List<Article> {
         return storage.values.filter { it.writerId == writerId }
     }
 
