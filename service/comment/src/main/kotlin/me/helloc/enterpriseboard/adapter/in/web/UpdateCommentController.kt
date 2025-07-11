@@ -21,7 +21,7 @@ class UpdateCommentController(
         @PathVariable commentId: Long,
         @RequestBody request: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
-        val comment = useCase.update(commentId, request.content)
+        val comment = useCase.update(commentId, request.content) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(CommentResponse.from(comment))
     }
 }

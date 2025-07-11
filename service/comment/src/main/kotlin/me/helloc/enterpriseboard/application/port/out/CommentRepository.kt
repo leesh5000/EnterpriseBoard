@@ -4,7 +4,7 @@ import me.helloc.enterpriseboard.domain.model.Comment
 
 interface CommentRepository {
     fun save(comment: Comment): Comment
-    fun findById(commentId: Long): Comment
+    fun findById(commentId: Long): Comment?
     fun findByArticleId(articleId: Long): List<Comment>
     fun findByWriterId(writerId: Long): List<Comment>
     fun deleteById(commentId: Long)

@@ -77,10 +77,10 @@ class RootCommentValidatorTest : StringSpec({
         exception.message shouldBe "ID 1에 해당하는 댓글은 이미 삭제되었습니다."
     }
 
-    "NullComment 검증 시 ROOT_COMMENT_NOT_FOUND 예외가 발생한다" {
+    "null 댓글 검증 시 ROOT_COMMENT_NOT_FOUND 예외가 발생한다" {
         // Given
         val validator = RootCommentValidator()
-        val nullComment = Comment.nullComment()
+        val nullComment: Comment? = null
         
         // When & Then
         val exception = shouldThrow<BusinessException> {
@@ -88,7 +88,7 @@ class RootCommentValidatorTest : StringSpec({
         }
         
         exception.errorCode shouldBe ErrorCode.ROOT_COMMENT_NOT_FOUND
-        exception.message shouldBe "ID -1에 해당하는 최상위 댓글을 찾을 수 없습니다."
+        exception.message shouldBe "ID {parentCommentId}에 해당하는 최상위 댓글을 찾을 수 없습니다."
     }
 
     "다양한 commentId와 parentCommentId 조합 테스트" {

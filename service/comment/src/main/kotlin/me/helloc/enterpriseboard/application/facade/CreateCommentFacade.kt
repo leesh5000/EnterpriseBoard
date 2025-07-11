@@ -4,7 +4,6 @@ import me.helloc.common.snowflake.Snowflake
 import me.helloc.enterpriseboard.application.port.`in`.CreateCommentUseCase
 import me.helloc.enterpriseboard.application.port.out.CommentRepository
 import me.helloc.enterpriseboard.domain.model.Comment
-import me.helloc.enterpriseboard.domain.model.NullComment
 import me.helloc.enterpriseboard.domain.service.RootCommentValidator
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +18,7 @@ class CreateCommentFacade(
     private val snowflake: Snowflake = Snowflake()
 
     override fun create(content: String, parentCommentId: Long, articleId: Long, writerId: Long): Comment {
-        return if (parentCommentId == NullComment.commentId) {
+        return if (parentCommentId == Comment.NO_PARENT_ID) {
             createRootComment(content, articleId, writerId)
         } else {
             createChildComment(parentCommentId, content, articleId, writerId)
@@ -32,12 +31,12 @@ class CreateCommentFacade(
         articleId: Long,
         writerId: Long,
     ): Comment {
-        val parent: Comment = repository.findById(parentCommentId)
+        val parent: Comment? = repository.findById(parentCommentId)
         rootCommentValidator.validate(parent)
         val comment = Comment.create(
             commentId = snowflake.nextId(),
             content = content,
-            parentCommentId = parent.commentId,
+            parentCommentId = parent!!.commentId,
             articleId = articleId,
             writerId = writerId
         )
@@ -52,7 +51,7 @@ class CreateCommentFacade(
         val comment = Comment.create(
             commentId = snowflake.nextId(),
             content = content,
-            parentCommentId = NullComment.commentId,
+            parentCommentId = Comment.NO_PARENT_ID,
             articleId = articleId,
             writerId = writerId
         )

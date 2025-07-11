@@ -16,11 +16,7 @@ class GetCommentController(
 
     @GetMapping("/{commentId}")
     fun getComment(@PathVariable commentId: Long): ResponseEntity<CommentResponse> {
-        val comment = useCase.getById(commentId)
-        
-        if (comment.isNull()) {
-            return ResponseEntity.notFound().build()
-        }
+        val comment = useCase.getById(commentId) ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(CommentResponse.from(comment))
     }

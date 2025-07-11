@@ -12,12 +12,8 @@ class UpdateCommentFacade(
     private val commentRepository: CommentRepository
 ) : UpdateCommentUseCase {
 
-    override fun update(commentId: Long, content: String): Comment {
-        val comment = commentRepository.findById(commentId)
-
-        if (comment.isNull()) {
-            return Comment.nullComment()
-        }
+    override fun update(commentId: Long, content: String): Comment? {
+        val comment = commentRepository.findById(commentId) ?: return null
 
         val updatedComment = comment.update(content)
         return commentRepository.save(updatedComment)

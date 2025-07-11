@@ -12,11 +12,7 @@ class DeleteCommentFacade(
 ) : DeleteCommentUseCase {
 
     override fun delete(commentId: Long) {
-        val comment = commentRepository.findById(commentId)
-        
-        if (comment.isNull()) {
-            return
-        }
+        val comment = commentRepository.findById(commentId) ?: return
         
         val deletedComment = comment.delete()
         commentRepository.save(deletedComment)

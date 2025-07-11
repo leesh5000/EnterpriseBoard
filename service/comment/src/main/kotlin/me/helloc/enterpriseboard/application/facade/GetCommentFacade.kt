@@ -14,7 +14,7 @@ class GetCommentFacade(
     private val commentRepository: CommentRepository
 ) : GetCommentUseCase {
 
-    override fun getById(commentId: Long): Comment {
+    override fun getById(commentId: Long): Comment? {
         return commentRepository.findById(commentId)
     }
 

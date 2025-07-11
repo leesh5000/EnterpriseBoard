@@ -11,7 +11,7 @@ import me.helloc.enterpriseboard.domain.service.RootCommentValidator
 
 class CreateCommentFacadeTest : StringSpec({
 
-    "parentCommentId가 -1일 때 루트 댓글 생성에 성공한다" {
+    "parentCommentId가 NO_PARENT_ID일 때 루트 댓글 생성에 성공한다" {
         // Given
         val repository = FakeCommentRepository()
         val validator = RootCommentValidator()
@@ -20,7 +20,7 @@ class CreateCommentFacadeTest : StringSpec({
         // When
         val result = facade.create(
             content = "루트 댓글",
-            parentCommentId = -1L,
+            parentCommentId = Comment.NO_PARENT_ID,
             articleId = 100L,
             writerId = 1L
         )
@@ -63,7 +63,6 @@ class CreateCommentFacadeTest : StringSpec({
         result.writerId shouldBe 2L
         result.commentId shouldNotBe 0L
         result.deleted shouldBe false
-        result.exists() shouldBe true
     }
     
     "대댓글 생성에 성공한다" {
@@ -194,11 +193,11 @@ class CreateCommentFacadeTest : StringSpec({
         
         // Then
         val savedComment = repository.findById(result.commentId)
-        savedComment.exists() shouldBe true
-        savedComment.content shouldBe "새로운 댓글"
-        savedComment.parentCommentId shouldBe 1L
-        savedComment.articleId shouldBe 100L
-        savedComment.writerId shouldBe 2L
+        savedComment shouldNotBe null
+        savedComment?.content shouldBe "새로운 댓글"
+        savedComment?.parentCommentId shouldBe 1L
+        savedComment?.articleId shouldBe 100L
+        savedComment?.writerId shouldBe 2L
     }
     
     "Snowflake ID가 고유하게 생성된다" {
