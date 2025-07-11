@@ -6,12 +6,13 @@ data class Article(
     val articleId: Long,
     val title: String,
     val content: String,
-    val boardId: Long, // shard key
+    val boardId: Long,
     val writerId: Long,
     val createdAt: LocalDateTime,
     val modifiedAt: LocalDateTime,
 ) {
-    fun update(title: String, content: String): Article {
+
+     fun update(title: String, content: String): Article {
         return this.copy(
             title = title, content = content, modifiedAt = LocalDateTime.now()
         )
@@ -38,3 +39,4 @@ data class Article(
         }
     }
 }
+

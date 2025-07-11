@@ -16,12 +16,14 @@ class ArticleTest : StringSpec({
         val writerId = 200L
 
         // When
-        val article = Article.create(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
             boardId = boardId,
-            writerId = writerId
+            writerId = writerId,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
 
         // Then
@@ -39,14 +41,17 @@ class ArticleTest : StringSpec({
         val content = "테스트 내용"
         val boardId = 100L
         val writerId = 200L
+        val now = LocalDateTime.now()
 
         // When
-        val article = Article.create(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
             boardId = boardId,
-            writerId = writerId
+            writerId = writerId,
+            createdAt = now,
+            modifiedAt = now
         )
 
         // Then
@@ -55,12 +60,14 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 제목과 내용이 변경되어야 한다" {
         // Given
-        val originalArticle = Article.create(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
             boardId = 100L,
-            writerId = 200L
+            writerId = 200L,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
         val newTitle = "수정된 제목"
         val newContent = "수정된 내용"
@@ -75,12 +82,14 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 수정 시간이 변경되어야 한다" {
         // Given
-        val originalArticle = Article.create(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
             boardId = 100L,
-            writerId = 200L
+            writerId = 200L,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
         val newTitle = "수정된 제목"
         val newContent = "수정된 내용"
@@ -95,12 +104,14 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 다른 필드들은 변경되지 않아야 한다" {
         // Given
-        val originalArticle = Article.create(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
             boardId = 100L,
-            writerId = 200L
+            writerId = 200L,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
         val newTitle = "수정된 제목"
         val newContent = "수정된 내용"
@@ -117,12 +128,14 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트는 불변성을 유지해야 한다" {
         // Given
-        val originalArticle = Article.create(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
             boardId = 100L,
-            writerId = 200L
+            writerId = 200L,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
         val newTitle = "수정된 제목"
         val newContent = "수정된 내용"
@@ -145,12 +158,14 @@ class ArticleTest : StringSpec({
         val writerId = 200L
 
         // When
-        val article = Article.create(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
             boardId = boardId,
-            writerId = writerId
+            writerId = writerId,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
 
         // Then
@@ -160,12 +175,14 @@ class ArticleTest : StringSpec({
 
     "빈 문자열로 Article을 업데이트할 수 있어야 한다" {
         // Given
-        val originalArticle = Article.create(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
             boardId = 100L,
-            writerId = 200L
+            writerId = 200L,
+            createdAt = LocalDateTime.now(),
+            modifiedAt = LocalDateTime.now()
         )
 
         // When

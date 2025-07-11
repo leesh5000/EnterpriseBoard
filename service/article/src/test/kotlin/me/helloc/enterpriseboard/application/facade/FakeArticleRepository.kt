@@ -2,6 +2,8 @@ package me.helloc.enterpriseboard.application.facade
 
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
 import me.helloc.enterpriseboard.domain.model.Article
+import me.helloc.enterpriseboard.domain.exception.BusinessException
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 
 class FakeArticleRepository : ArticleRepository {
     private val storage = mutableMapOf<Long, Article>()
@@ -11,15 +13,17 @@ class FakeArticleRepository : ArticleRepository {
         return article
     }
 
-    override fun findById(articleId: Long): Article? {
-        return storage[articleId]
+    override fun getById(articleId: Long): Article {
+        return storage[articleId] ?: throw ErrorCode.NOT_FOUND_ARTICLE.toException(
+            "articleId" to articleId
+        )
     }
 
-    override fun findByBoardId(boardId: Long): List<Article> {
+    override fun getByBoardId(boardId: Long): List<Article> {
         return storage.values.filter { it.boardId == boardId }
     }
 
-    override fun findByWriterId(writerId: Long): List<Article> {
+    override fun getByWriterId(writerId: Long): List<Article> {
         return storage.values.filter { it.writerId == writerId }
     }
 
@@ -49,6 +53,27 @@ class FakeArticleRepository : ArticleRepository {
             .take(limit.toInt())
             .count()
             .toLong()
+    }
+
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+    ): List<Article> {
+        return storage.values
+            .filter { it.boardId == boardId }
+            .sortedByDescending { it.articleId }
+            .take(limit.toInt())
+    }
+
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+        lastArticleId: Long,
+    ): List<Article> {
+        return storage.values
+            .filter { it.boardId == boardId && it.articleId < lastArticleId }
+            .sortedByDescending { it.articleId }
+            .take(limit.toInt())
     }
 
     // 테스트를 위한 헬퍼 메서드

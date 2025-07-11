@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.adapter.out.persistence
 
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -24,18 +25,20 @@ class ArticleJpaAdapter(
         return articleJpaRepository.save(entity).toDomain()
     }
 
-    override fun findById(articleId: Long): Article? {
+    override fun getById(articleId: Long): Article {
         return articleJpaRepository.findById(articleId)
             .map { it.toDomain() }
-            .orElse(null)
+            .orElseThrow {
+                ErrorCode.NOT_FOUND_ARTICLE.toException("articleId" to articleId)
+            }
     }
 
-    override fun findByBoardId(boardId: Long): List<Article> {
+    override fun getByBoardId(boardId: Long): List<Article> {
         return articleJpaRepository.findByBoardId(boardId)
             .map { it.toDomain() }
     }
 
-    override fun findByWriterId(writerId: Long): List<Article> {
+    override fun getByWriterId(writerId: Long): List<Article> {
         return articleJpaRepository.findByWriterId(writerId)
             .map { it.toDomain() }
     }
@@ -61,4 +64,22 @@ class ArticleJpaAdapter(
     override fun countByBoardId(boardId: Long, limit: Long): Long {
         return articleJpaRepository.countByBoardId(boardId, limit)
     }
+
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+    ): List<Article> {
+        return articleJpaRepository.findAllInfiniteScroll(boardId, limit)
+            .map { it.toDomain() }
+    }
+
+    override fun findAllInfiniteScroll(
+        boardId: Long,
+        limit: Long,
+        lastArticleId: Long,
+    ): List<Article> {
+        return articleJpaRepository.findAllInfiniteScroll(boardId, limit, lastArticleId)
+            .map { it.toDomain() }
+    }
+
 }

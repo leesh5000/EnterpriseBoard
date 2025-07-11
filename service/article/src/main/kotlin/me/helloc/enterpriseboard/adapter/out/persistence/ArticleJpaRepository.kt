@@ -35,4 +35,26 @@ interface ArticleJpaRepository : JpaRepository<ArticleJpaEntity, Long> {
         nativeQuery = true
     )
     fun countByBoardId(@Param("boardId") boardId: Long, @Param("limit") limit: Long): Long
+
+    @Query(
+        value = ("select article.article_id, article.title, article.content, article.board_id, article.writer_id, " +
+            "article.created_at, article.modified_at " +
+            "from article " +
+            "where board_id = :boardId " +
+            "order by article_id desc limit :limit"), nativeQuery = true
+    )
+    fun findAllInfiniteScroll(@Param("boardId") boardId: Long, @Param("limit") limit: Long): MutableList<ArticleJpaEntity>
+
+    @Query(
+        value = ("select article.article_id, article.title, article.content, article.board_id, article.writer_id, " +
+            "article.created_at, article.modified_at " +
+            "from article " +
+            "where board_id = :boardId and article_id < :lastArticleId " +
+            "order by article_id desc limit :limit"), nativeQuery = true
+    )
+    fun findAllInfiniteScroll(
+        @Param("boardId") boardId: Long,
+        @Param("limit") limit: Long,
+        @Param("lastArticleId") lastArticleId: Long,
+    ): MutableList<ArticleJpaEntity>
 }
