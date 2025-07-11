@@ -18,9 +18,6 @@ class GetArticleController(
     @GetMapping("/{articleId}")
     fun getArticle(@PathVariable articleId: Long): ResponseEntity<ArticleResponse> {
         val article = useCase.getById(articleId)
-        if (article.isNull()) {
-            throw ErrorCode.NOT_FOUND_ARTICLE.toException("articleId" to articleId)
-        }
         return ResponseEntity.ok(ArticleResponse.from(article))
     }
 }

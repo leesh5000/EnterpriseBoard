@@ -1,9 +1,9 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.application.port.`in`.*
+import me.helloc.enterpriseboard.domain.exception.BusinessException
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.domain.model.NullArticle
-import me.helloc.enterpriseboard.domain.model.RealArticle
 import java.time.LocalDateTime
 
 class FakeCreateArticleUseCase : CreateArticleUseCase {
@@ -21,7 +21,7 @@ class FakeCreateArticleUseCase : CreateArticleUseCase {
         return articleToReturn
     }
 
-    private fun createDefaultArticle() = RealArticle(
+    private fun createDefaultArticle() = Article(
         articleId = 1L,
         title = "테스트 제목",
         content = "테스트 내용",
@@ -49,7 +49,7 @@ class FakeUpdateArticleUseCase : UpdateArticleUseCase {
         return articleToReturn
     }
 
-    private fun createDefaultArticle() = RealArticle(
+    private fun createDefaultArticle() = Article(
         articleId = 1L,
         title = "수정된 제목",
         content = "수정된 내용",
@@ -72,7 +72,9 @@ class FakeGetArticleUseCase : GetArticleUseCase {
     }
 
     override fun getById(articleId: Long): Article {
-        return storage[articleId] ?: NullArticle
+        return storage[articleId] ?: throw ErrorCode.NOT_FOUND_ARTICLE.toException(
+            "articleId" to articleId
+        )
     }
 
     override fun getByBoardId(boardId: Long): List<Article> {

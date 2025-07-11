@@ -8,8 +8,6 @@ import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.domain.exception.BusinessException
 import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.domain.model.NullArticle
-import me.helloc.enterpriseboard.domain.model.RealArticle
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -28,7 +26,7 @@ class GetArticleControllerTest : StringSpec({
     "GET /api/v1/articles/{articleId} - 존재하는 Article 조회 시 200 OK와 함께 응답해야 한다" {
         // Given
         val articleId = 1L
-        val article = RealArticle(
+        val article = Article(
             articleId = articleId,
             title = "조회된 제목",
             content = "조회된 내용",
@@ -70,7 +68,7 @@ class GetArticleControllerTest : StringSpec({
         // Given
         val articleId = 789L
         val now = LocalDateTime.now()
-        val article = RealArticle(
+        val article = Article(
             articleId = articleId,
             title = "도메인 제목",
             content = "도메인 내용",

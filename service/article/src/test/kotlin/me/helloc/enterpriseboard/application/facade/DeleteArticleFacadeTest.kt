@@ -4,8 +4,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.domain.model.NullArticle
-import me.helloc.enterpriseboard.domain.model.RealArticle
+
+
 import java.time.LocalDateTime
 
 class DeleteArticleFacadeTest : StringSpec({
@@ -20,7 +20,7 @@ class DeleteArticleFacadeTest : StringSpec({
 
     "존재하는 Article을 삭제할 수 있어야 한다" {
         // Given
-        val article = RealArticle(
+        val article = Article(
             articleId = 1L,
             title = "테스트 제목",
             content = "테스트 내용",
@@ -41,7 +41,7 @@ class DeleteArticleFacadeTest : StringSpec({
 
     "여러 Article 중 특정 Article만 삭제되어야 한다" {
         // Given
-        val article1 = RealArticle(
+        val article1 = Article(
             articleId = 1L,
             title = "첫 번째 제목",
             content = "첫 번째 내용",
@@ -50,7 +50,7 @@ class DeleteArticleFacadeTest : StringSpec({
             createdAt = LocalDateTime.now(),
             modifiedAt = LocalDateTime.now()
         )
-        val article2 = RealArticle(
+        val article2 = Article(
             articleId = 2L,
             title = "두 번째 제목",
             content = "두 번째 내용",
@@ -59,7 +59,7 @@ class DeleteArticleFacadeTest : StringSpec({
             createdAt = LocalDateTime.now(),
             modifiedAt = LocalDateTime.now()
         )
-        val article3 = RealArticle(
+        val article3 = Article(
             articleId = 3L,
             title = "세 번째 제목",
             content = "세 번째 내용",
@@ -84,7 +84,7 @@ class DeleteArticleFacadeTest : StringSpec({
 
     "삭제 후 같은 ID로 새로운 Article을 저장할 수 있어야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -96,7 +96,7 @@ class DeleteArticleFacadeTest : StringSpec({
         fakeRepository.save(originalArticle)
         deleteArticleFacade.delete(1L)
 
-        val newArticle = RealArticle(
+        val newArticle = Article(
             articleId = 1L,
             title = "새로운 제목",
             content = "새로운 내용",

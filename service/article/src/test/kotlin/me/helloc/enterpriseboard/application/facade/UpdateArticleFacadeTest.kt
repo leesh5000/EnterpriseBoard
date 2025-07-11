@@ -100,7 +100,7 @@ class UpdateArticleFacadeTest : StringSpec({
         val result = updateArticleFacade.update(articleId, title, content)
 
         // Then
-        result.isNull() shouldBe true
+        result== null shouldBe true
         result.articleId shouldBe -1L
     }
 

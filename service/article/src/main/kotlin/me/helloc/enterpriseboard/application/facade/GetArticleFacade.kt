@@ -3,6 +3,7 @@ package me.helloc.enterpriseboard.application.facade
 import me.helloc.enterpriseboard.application.port.`in`.GetArticlePageResult
 import me.helloc.enterpriseboard.application.port.`in`.GetArticleUseCase
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
 import me.helloc.enterpriseboard.domain.service.PageLimitCalculator
 import org.springframework.stereotype.Component

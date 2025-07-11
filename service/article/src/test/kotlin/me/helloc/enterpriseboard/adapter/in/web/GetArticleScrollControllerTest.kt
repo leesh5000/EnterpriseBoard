@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.domain.model.RealArticle
+
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -26,7 +26,7 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val articles = (1..5).map { id ->
-            RealArticle(
+            Article(
                 articleId = id.toLong(),
                 title = "제목 $id",
                 content = "내용 $id",
@@ -60,7 +60,7 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val articles = (1..10).map { id ->
-            RealArticle(
+            Article(
                 articleId = id.toLong(),
                 title = "제목 $id",
                 content = "내용 $id",
@@ -94,11 +94,11 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val targetBoardId = 100L
         val articles = listOf(
-            RealArticle(articleId = 1L, title = "제목 1", content = "내용 1", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
-            RealArticle(articleId = 2L, title = "제목 2", content = "내용 2", boardId = 101L, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
-            RealArticle(articleId = 3L, title = "제목 3", content = "내용 3", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
-            RealArticle(articleId = 4L, title = "제목 4", content = "내용 4", boardId = 101L, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
-            RealArticle(articleId = 5L, title = "제목 5", content = "내용 5", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now())
+            Article(articleId = 1L, title = "제목 1", content = "내용 1", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
+            Article(articleId = 2L, title = "제목 2", content = "내용 2", boardId = 101L, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
+            Article(articleId = 3L, title = "제목 3", content = "내용 3", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
+            Article(articleId = 4L, title = "제목 4", content = "내용 4", boardId = 101L, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
+            Article(articleId = 5L, title = "제목 5", content = "내용 5", boardId = targetBoardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now())
         )
         articles.forEach { fakeGetUseCase.addArticle(it) }
 
@@ -143,8 +143,8 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val articles = listOf(
-            RealArticle(articleId = 1L, title = "제목 1", content = "내용 1", boardId = boardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
-            RealArticle(articleId = 2L, title = "제목 2", content = "내용 2", boardId = boardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now())
+            Article(articleId = 1L, title = "제목 1", content = "내용 1", boardId = boardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now()),
+            Article(articleId = 2L, title = "제목 2", content = "내용 2", boardId = boardId, writerId = 200L, createdAt = LocalDateTime.now(), modifiedAt = LocalDateTime.now())
         )
         articles.forEach { fakeGetUseCase.addArticle(it) }
 
@@ -169,7 +169,7 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val now = LocalDateTime.now()
-        val article = RealArticle(
+        val article = Article(
             articleId = 123L,
             title = "테스트 제목",
             content = "테스트 내용",
@@ -206,7 +206,7 @@ class GetArticleScrollControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val articles = (1..3).map { id ->
-            RealArticle(
+            Article(
                 articleId = id.toLong(),
                 title = "제목 $id",
                 content = "내용 $id",

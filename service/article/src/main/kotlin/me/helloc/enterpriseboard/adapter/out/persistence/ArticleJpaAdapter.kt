@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.adapter.out.persistence
 
 import me.helloc.enterpriseboard.application.port.out.ArticleRepository
+import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -27,7 +28,9 @@ class ArticleJpaAdapter(
     override fun findById(articleId: Long): Article {
         return articleJpaRepository.findById(articleId)
             .map { it.toDomain() }
-            .orElse(Article.empty())
+            .orElseThrow {
+                ErrorCode.NOT_FOUND_ARTICLE.toException("articleId" to articleId)
+            }
     }
 
     override fun findByBoardId(boardId: Long): List<Article> {

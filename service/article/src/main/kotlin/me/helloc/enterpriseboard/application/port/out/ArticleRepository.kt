@@ -1,6 +1,7 @@
 package me.helloc.enterpriseboard.application.port.out
 
 import me.helloc.enterpriseboard.domain.model.Article
+import java.util.Optional
 
 interface ArticleRepository {
     fun save(article: Article): Article

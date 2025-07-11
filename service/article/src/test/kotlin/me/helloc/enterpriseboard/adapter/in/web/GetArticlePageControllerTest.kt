@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldNotBe
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
 import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.domain.model.Article
-import me.helloc.enterpriseboard.domain.model.RealArticle
+
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -30,7 +30,7 @@ class GetArticlePageControllerTest : StringSpec({
         val pageSize = 10L
         val movablePageCount = 5L
 
-        val article1 = RealArticle(
+        val article1 = Article(
             articleId = 1L,
             title = "첫 번째 게시글",
             content = "첫 번째 내용",
@@ -39,7 +39,7 @@ class GetArticlePageControllerTest : StringSpec({
             createdAt = LocalDateTime.now(),
             modifiedAt = LocalDateTime.now()
         )
-        val article2 = RealArticle(
+        val article2 = Article(
             articleId = 2L,
             title = "두 번째 게시글",
             content = "두 번째 내용",
@@ -71,7 +71,7 @@ class GetArticlePageControllerTest : StringSpec({
         val pageSize = 10L
         // movablePageCount는 기본값 10L을 사용
 
-        val article = RealArticle(
+        val article = Article(
             articleId = 1L,
             title = "테스트 게시글",
             content = "테스트 내용",
@@ -112,7 +112,7 @@ class GetArticlePageControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val now = LocalDateTime.now()
-        val article = RealArticle(
+        val article = Article(
             articleId = 123L,
             title = "변환 테스트 제목",
             content = "변환 테스트 내용",
@@ -144,7 +144,7 @@ class GetArticlePageControllerTest : StringSpec({
         // Given
         val boardId = 100L
         val articles = (1..15).map { id ->
-            RealArticle(
+            Article(
                 articleId = id.toLong(),
                 title = "제목 $id",
                 content = "내용 $id",

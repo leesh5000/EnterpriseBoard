@@ -16,7 +16,7 @@ class ArticleTest : StringSpec({
         val writerId = 200L
 
         // When
-        val article = RealArticle(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
@@ -44,7 +44,7 @@ class ArticleTest : StringSpec({
         val now = LocalDateTime.now()
 
         // When
-        val article = RealArticle(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
@@ -60,7 +60,7 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 제목과 내용이 변경되어야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -82,7 +82,7 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 수정 시간이 변경되어야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -104,7 +104,7 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트 시 다른 필드들은 변경되지 않아야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -128,7 +128,7 @@ class ArticleTest : StringSpec({
 
     "Article 업데이트는 불변성을 유지해야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -158,7 +158,7 @@ class ArticleTest : StringSpec({
         val writerId = 200L
 
         // When
-        val article = RealArticle(
+        val article = Article(
             articleId = articleId,
             title = title,
             content = content,
@@ -175,7 +175,7 @@ class ArticleTest : StringSpec({
 
     "빈 문자열로 Article을 업데이트할 수 있어야 한다" {
         // Given
-        val originalArticle = RealArticle(
+        val originalArticle = Article(
             articleId = 1L,
             title = "원본 제목",
             content = "원본 내용",
@@ -196,7 +196,7 @@ class ArticleTest : StringSpec({
     "같은 값으로 생성된 Article 인스턴스는 동등해야 한다" {
         // Given
         val now = LocalDateTime.now()
-        val article1 = RealArticle(
+        val article1 = Article(
             articleId = 1L,
             title = "제목",
             content = "내용",
@@ -205,7 +205,7 @@ class ArticleTest : StringSpec({
             createdAt = now,
             modifiedAt = now
         )
-        val article2 = RealArticle(
+        val article2 = Article(
             articleId = 1L,
             title = "제목",
             content = "내용",
@@ -222,7 +222,7 @@ class ArticleTest : StringSpec({
     "다른 값으로 생성된 Article 인스턴스는 동등하지 않아야 한다" {
         // Given
         val now = LocalDateTime.now()
-        val article1 = RealArticle(
+        val article1 = Article(
             articleId = 1L,
             title = "제목1",
             content = "내용",
@@ -231,7 +231,7 @@ class ArticleTest : StringSpec({
             createdAt = now,
             modifiedAt = now
         )
-        val article2 = RealArticle(
+        val article2 = Article(
             articleId = 1L,
             title = "제목2",
             content = "내용",
