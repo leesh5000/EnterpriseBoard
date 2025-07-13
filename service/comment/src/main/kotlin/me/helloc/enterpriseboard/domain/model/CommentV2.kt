@@ -5,11 +5,11 @@ import java.time.LocalDateTime
 data class CommentV2(
     val commentId: Long,
     val content: String,
-    val parentCommentId: Long,
     val articleId: Long, // shard key
     val writerId: Long,
-    val deleted: Boolean,
-    val createdAt: LocalDateTime,
+    val commentPath: CommentPath,
+    val deleted: Boolean = false,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
     fun delete(): CommentV2 {
@@ -19,29 +19,10 @@ data class CommentV2(
     }
 
     fun isRoot(): Boolean {
-        return parentCommentId == commentId
+        return commentPath.isRoot()
     }
 
     companion object {
         const val EMPTY_ID = 0L
-
-        fun create(
-            commentId: Long,
-            content: String,
-            parentCommentId: Long = EMPTY_ID,
-            articleId: Long,
-            writerId: Long,
-        ): CommentV2 {
-            val now = LocalDateTime.now()
-            return CommentV2(
-                commentId = commentId,
-                content = content,
-                parentCommentId = if (parentCommentId == EMPTY_ID) commentId else parentCommentId,
-                articleId = articleId,
-                writerId = writerId,
-                deleted = false,
-                createdAt = now
-            )
-        }
     }
 }
