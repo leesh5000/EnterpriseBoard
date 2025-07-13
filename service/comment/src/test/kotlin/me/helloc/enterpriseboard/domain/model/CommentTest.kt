@@ -80,7 +80,7 @@ class CommentTest : StringSpec({
         val comment = Comment.create(
             commentId = 1L,
             content = "루트 댓글",
-            parentCommentId = Comment.NO_PARENT_ID,
+            parentCommentId = Comment.EMPTY_ID,
             articleId = 100L,
             writerId = 200L
         )

@@ -39,6 +39,48 @@ class FakeCommentRepository : CommentRepository {
             .toLong()
     }
 
+    override fun findAll(
+        articleId: Long,
+        offset: Long,
+        limit: Long,
+    ): List<Comment> {
+        return storage.values
+            .filter { it.articleId == articleId }
+            .sortedByDescending { it.commentId }
+            .drop(offset.toInt())
+            .take(limit.toInt())
+    }
+
+    override fun countByArticleId(articleId: Long, limit: Long): Long {
+        return storage.values
+            .filter { it.articleId == articleId }
+            .take(limit.toInt())
+            .count()
+            .toLong()
+    }
+
+    override fun findAllInfiniteScroll(
+        articleId: Long,
+        limit: Long,
+    ): List<Comment> {
+        return storage.values
+            .filter { it.articleId == articleId }
+            .sortedByDescending { it.commentId }
+            .take(limit.toInt())
+    }
+
+    override fun findAllInfiniteScroll(
+        articleId: Long,
+        lastParentCommentId: Long,
+        lastCommentId: Long,
+        limit: Long,
+    ): List<Comment> {
+        return storage.values
+            .filter { it.articleId == articleId && it.commentId < lastCommentId }
+            .sortedByDescending { it.commentId }
+            .take(limit.toInt())
+    }
+
     // 테스트를 위한 헬퍼 메서드
     fun clear() {
         storage.clear()

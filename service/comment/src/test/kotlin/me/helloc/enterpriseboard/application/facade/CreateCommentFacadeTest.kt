@@ -20,7 +20,7 @@ class CreateCommentFacadeTest : StringSpec({
         // When
         val result = facade.create(
             content = "루트 댓글",
-            parentCommentId = Comment.NO_PARENT_ID,
+            parentCommentId = Comment.EMPTY_ID,
             articleId = 100L,
             writerId = 1L
         )

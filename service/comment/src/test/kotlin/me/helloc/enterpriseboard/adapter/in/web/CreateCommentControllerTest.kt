@@ -24,7 +24,7 @@ class CreateCommentControllerTest : StringSpec({
         // Given
         val request = CreateCommentRequest(
             content = "새 댓글 내용",
-            parentCommentId = Comment.NO_PARENT_ID,
+            parentCommentId = Comment.EMPTY_ID,
             articleId = 100L,
             writerId = 200L
         )
@@ -76,7 +76,7 @@ class CreateCommentControllerTest : StringSpec({
         // Given
         val request = CreateCommentRequest(
             content = "변환 테스트 댓글",
-            parentCommentId = Comment.NO_PARENT_ID,
+            parentCommentId = Comment.EMPTY_ID,
             articleId = 100L,
             writerId = 200L
         )

@@ -15,7 +15,7 @@ class CreateCommentFacade(
 ) : CreateCommentUseCase {
 
     override fun create(content: String, parentCommentId: Long, articleId: Long, writerId: Long): Comment {
-        return if (parentCommentId == Comment.NO_PARENT_ID) {
+        return if (parentCommentId == Comment.EMPTY_ID) {
             val rootComment = commentFactory.createRootComment(content, articleId, writerId)
             repository.save(rootComment)
         } else {

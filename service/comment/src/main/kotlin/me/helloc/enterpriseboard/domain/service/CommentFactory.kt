@@ -45,7 +45,7 @@ class CommentFactory {
         return Comment.create(
             commentId = snowflake.nextId(),
             content = content,
-            parentCommentId = Comment.NO_PARENT_ID,
+            parentCommentId = Comment.EMPTY_ID,
             articleId = articleId,
             writerId = writerId
         )
