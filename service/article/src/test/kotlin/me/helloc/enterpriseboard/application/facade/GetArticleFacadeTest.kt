@@ -228,7 +228,7 @@ class GetArticleFacadeTest : StringSpec({
         // Then
         result.articles shouldHaveSize 2
         result.articles shouldContainExactlyInAnyOrder listOf(article3, article2) // ID 내림차순 정렬
-        result.limitedTotalCount shouldBe 3L // 전체 카운트는 limit에 의해 제한됨
+        result.visibleRangeCount shouldBe 3L // 전체 카운트는 limit에 의해 제한됨
     }
 
     "첫 번째 페이지 조회 시 offset이 0이어야 한다" {
@@ -296,7 +296,7 @@ class GetArticleFacadeTest : StringSpec({
 
         // Then
         result.articles.shouldBeEmpty()
-        result.limitedTotalCount shouldBe 0L
+        result.visibleRangeCount shouldBe 0L
     }
 
     "페이지 크기보다 적은 데이터가 있을 때 실제 데이터 개수만 반환해야 한다" {

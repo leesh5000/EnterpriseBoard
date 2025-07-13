@@ -26,7 +26,7 @@ class GetArticlePageController(
 
         val response = GetArticlePageResponse.of(
             articles = articlePage.articles.map { ArticleResponse.from(it) },
-            totalCount = articlePage.limitedTotalCount
+            totalCount = articlePage.visibleRangeCount
         )
 
         return ResponseEntity.ok(response)

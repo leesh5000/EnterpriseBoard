@@ -12,5 +12,5 @@ interface GetArticleUseCase {
 
 data class GetArticlePageResult(
     val articles: List<Article>,
-    val limitedTotalCount: Long
+    val visibleRangeCount: Long
 )

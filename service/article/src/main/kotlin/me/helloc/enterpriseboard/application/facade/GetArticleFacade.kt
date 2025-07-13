@@ -47,18 +47,18 @@ class GetArticleFacade(
 
         return GetArticlePageResult(
             articles = articles,
-            limitedTotalCount = limitedTotalCount
+            visibleRangeCount = limitedTotalCount
         )
     }
 
     override fun getScroll(boardId: Long, pageSize: Long, lastArticleId: Long): List<Article> {
-        val articles = if (lastArticleId == 0L) {
-            articleRepository.findAllInfiniteScroll(
+        val articles = if (lastArticleId == Article.EMPTY_ID) {
+            articleRepository.findAllScroll(
                 boardId = boardId,
                 limit = pageSize
             )
         } else {
-            articleRepository.findAllInfiniteScroll(
+            articleRepository.findAllScroll(
                 boardId = boardId,
                 limit = pageSize,
                 lastArticleId = lastArticleId

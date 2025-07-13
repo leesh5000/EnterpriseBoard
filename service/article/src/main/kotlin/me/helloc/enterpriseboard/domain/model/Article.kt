@@ -19,6 +19,8 @@ data class Article(
     }
 
     companion object {
+        const val EMPTY_ID: Long = 0L
+
         fun create(
             articleId: Long,
             title: String,

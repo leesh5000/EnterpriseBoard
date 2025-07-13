@@ -4,8 +4,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import me.helloc.enterpriseboard.adapter.`in`.web.dto.GetArticlePageResponse
-import me.helloc.enterpriseboard.adapter.`in`.web.dto.ArticleResponse
 import me.helloc.enterpriseboard.domain.model.Article
 
 import org.springframework.http.HttpStatus
@@ -59,7 +57,7 @@ class GetArticlePageControllerTest : StringSpec({
         response.statusCode shouldBe HttpStatus.OK
         response.body shouldNotBe null
         response.body!!.articles shouldHaveSize 2
-        response.body?.totalCount shouldBe 2L
+        response.body?.visibleRangeCount shouldBe 2L
         response.body?.articles?.get(0)?.articleId shouldBe 2L // ID 내림차순
         response.body?.articles?.get(1)?.articleId shouldBe 1L
     }
@@ -105,7 +103,7 @@ class GetArticlePageControllerTest : StringSpec({
         response.statusCode shouldBe HttpStatus.OK
         response.body shouldNotBe null
         response.body!!.articles shouldHaveSize 0
-        response.body?.totalCount shouldBe 0L
+        response.body?.visibleRangeCount shouldBe 0L
     }
 
     "GET /api/v1/articles - Article이 GetArticlePageItemResponse로 올바르게 변환되어야 한다" {
@@ -167,7 +165,7 @@ class GetArticlePageControllerTest : StringSpec({
         // Then
         response.statusCode shouldBe HttpStatus.OK
         response.body shouldNotBe null
-        response.body?.totalCount shouldBe 15L
+        response.body?.visibleRangeCount shouldBe 15L
         // 실제 페이지네이션 로직은 FakeGetArticleUseCase에서 처리됨
     }
 })

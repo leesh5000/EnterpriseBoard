@@ -1,7 +1,6 @@
 package me.helloc.enterpriseboard.adapter.`in`.web
 
 import me.helloc.enterpriseboard.application.port.`in`.*
-import me.helloc.enterpriseboard.domain.exception.BusinessException
 import me.helloc.enterpriseboard.domain.exception.ErrorCode
 import me.helloc.enterpriseboard.domain.model.Article
 import java.time.LocalDateTime
@@ -93,14 +92,12 @@ class FakeGetArticleUseCase : GetArticleUseCase {
             .drop(offset.toInt())
             .take(pageSize.toInt())
 
-        val totalCount = storage.values
-            .filter { it.boardId == boardId }
-            .count()
+        val totalCount = storage.values.count { it.boardId == boardId }
             .toLong()
 
         return GetArticlePageResult(
             articles = articles,
-            limitedTotalCount = totalCount
+            visibleRangeCount = totalCount
         )
     }
 

@@ -2,7 +2,7 @@ package me.helloc.enterpriseboard.adapter.`in`.web.dto
 
 data class GetArticlePageResponse(
     val articles: List<ArticleResponse>,
-    val totalCount: Long
+    val visibleRangeCount: Long
 ) {
     companion object {
         fun of(
@@ -11,7 +11,7 @@ data class GetArticlePageResponse(
         ): GetArticlePageResponse {
             return GetArticlePageResponse(
                 articles = articles,
-                totalCount = totalCount
+                visibleRangeCount = totalCount
             )
         }
     }
