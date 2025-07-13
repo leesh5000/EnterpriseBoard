@@ -41,4 +41,35 @@ class CommentJpaAdapter(
     override fun countBy(articleId: Long, parentCommentId: Long, limit: Long): Long {
         return commentJpaRepository.countBy(articleId, parentCommentId, limit)
     }
+
+    override fun findAll(
+        articleId: Long,
+        offset: Long,
+        limit: Long,
+    ): List<Comment> {
+        return commentJpaRepository.findAll(articleId, offset, limit)
+            .map { it.toDomainModel() }
+    }
+
+    override fun countByArticleId(articleId: Long, limit: Long): Long {
+        return commentJpaRepository.count(articleId, limit)
+    }
+
+    override fun findAllInfiniteScroll(
+        articleId: Long,
+        limit: Long,
+    ): List<Comment> {
+        return commentJpaRepository.findAllInfiniteScroll(articleId, limit)
+            .map { it.toDomainModel() }
+    }
+
+    override fun findAllInfiniteScroll(
+        articleId: Long,
+        lastParentCommentId: Long,
+        lastCommentId: Long,
+        limit: Long,
+    ): List<Comment> {
+        return commentJpaRepository.findAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId, limit)
+            .map { it.toDomainModel() }
+    }
 }

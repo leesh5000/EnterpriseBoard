@@ -2,7 +2,7 @@ package me.helloc.enterpriseboard.domain.model
 
 import java.time.LocalDateTime
 
-data class Comment(
+data class CommentV2(
     val commentId: Long,
     val content: String,
     val parentCommentId: Long,
@@ -12,7 +12,7 @@ data class Comment(
     val createdAt: LocalDateTime,
 ) {
 
-    fun delete(): Comment {
+    fun delete(): CommentV2 {
         return this.copy(
             deleted = true
         )
@@ -31,9 +31,9 @@ data class Comment(
             parentCommentId: Long = EMPTY_ID,
             articleId: Long,
             writerId: Long,
-        ): Comment {
+        ): CommentV2 {
             val now = LocalDateTime.now()
-            return Comment(
+            return CommentV2(
                 commentId = commentId,
                 content = content,
                 parentCommentId = if (parentCommentId == EMPTY_ID) commentId else parentCommentId,

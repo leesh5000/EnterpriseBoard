@@ -23,12 +23,12 @@ data class Comment(
     }
 
     companion object {
-        const val NO_PARENT_ID = 0L
-        
+        const val EMPTY_ID = 0L
+
         fun create(
             commentId: Long,
             content: String,
-            parentCommentId: Long = NO_PARENT_ID,
+            parentCommentId: Long = EMPTY_ID,
             articleId: Long,
             writerId: Long,
         ): Comment {
@@ -36,7 +36,7 @@ data class Comment(
             return Comment(
                 commentId = commentId,
                 content = content,
-                parentCommentId = if (parentCommentId == NO_PARENT_ID) commentId else parentCommentId,
+                parentCommentId = if (parentCommentId == EMPTY_ID) commentId else parentCommentId,
                 articleId = articleId,
                 writerId = writerId,
                 deleted = false,
