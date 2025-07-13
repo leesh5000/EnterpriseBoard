@@ -55,7 +55,7 @@ class FakeArticleRepository : ArticleRepository {
             .toLong()
     }
 
-    override fun findAllInfiniteScroll(
+    override fun findAllScroll(
         boardId: Long,
         limit: Long,
     ): List<Article> {
@@ -65,7 +65,7 @@ class FakeArticleRepository : ArticleRepository {
             .take(limit.toInt())
     }
 
-    override fun findAllInfiniteScroll(
+    override fun findAllScroll(
         boardId: Long,
         limit: Long,
         lastArticleId: Long,

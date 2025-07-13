@@ -65,7 +65,7 @@ class ArticleJpaAdapter(
         return articleJpaRepository.countByBoardId(boardId, limit)
     }
 
-    override fun findAllInfiniteScroll(
+    override fun findAllScroll(
         boardId: Long,
         limit: Long,
     ): List<Article> {
@@ -73,7 +73,7 @@ class ArticleJpaAdapter(
             .map { it.toDomain() }
     }
 
-    override fun findAllInfiniteScroll(
+    override fun findAllScroll(
         boardId: Long,
         limit: Long,
         lastArticleId: Long,

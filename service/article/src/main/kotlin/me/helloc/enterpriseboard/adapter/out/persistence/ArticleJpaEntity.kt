@@ -8,15 +8,15 @@ import java.time.LocalDateTime
 
 @Table(name = "article")
 @Entity
-class ArticleJpaEntity(
+open class ArticleJpaEntity(
     @Id
-    val articleId: Long = 0L,
-    var title: String = "",
-    var content: String = "",
-    val boardId: Long = 0L,
-    val writerId: Long = 0L,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    var modifiedAt: LocalDateTime = LocalDateTime.now()
+    val articleId: Long,
+    var title: String,
+    var content: String,
+    val boardId: Long,
+    val writerId: Long,
+    val createdAt: LocalDateTime,
+    var modifiedAt: LocalDateTime
 ) {
     companion object {
         fun from(article: Article): ArticleJpaEntity {

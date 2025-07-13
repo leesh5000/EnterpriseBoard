@@ -300,7 +300,7 @@ class ArticleIntegrationTest {
         // Then - 첫 번째 페이지 검증
         assert(pageResponse1.statusCode == HttpStatus.OK)
         assert(pageResponse1.body?.articles?.size == 10)
-        assert(pageResponse1.body?.totalCount!! > 0) // PageLimitCalculator에 의해 계산된 값
+        assert(pageResponse1.body?.visibleRangeCount!! > 0) // PageLimitCalculator에 의해 계산된 값
 
         // ID 내림차순 정렬 확인 (최신 게시글이 먼저)
         val firstPageArticles = pageResponse1.body?.articles!!
@@ -356,7 +356,7 @@ class ArticleIntegrationTest {
         // Then
         assert(pageResponse.statusCode == HttpStatus.OK)
         assert(pageResponse.body?.articles?.size == 1)
-        assert(pageResponse.body?.totalCount!! > 0)
+        assert(pageResponse.body?.visibleRangeCount!! > 0)
         assert(pageResponse.body?.articles?.first()?.title == "기본값 테스트 제목")
     }
 
@@ -374,7 +374,7 @@ class ArticleIntegrationTest {
         // Then
         assert(pageResponse.statusCode == HttpStatus.OK)
         assert(pageResponse.body?.articles?.size == 0)
-        assert(pageResponse.body?.totalCount == 0L)
+        assert(pageResponse.body?.visibleRangeCount == 0L)
     }
 
     @Test
@@ -470,7 +470,7 @@ class ArticleIntegrationTest {
         // Then - 실제 데이터 개수만 반환되는지 확인
         assert(pageResponse.statusCode == HttpStatus.OK)
         assert(pageResponse.body?.articles?.size == 3)
-        assert(pageResponse.body?.totalCount == 3L)
+        assert(pageResponse.body?.visibleRangeCount == 3L)
     }
 
     @Test
